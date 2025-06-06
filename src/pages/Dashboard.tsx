@@ -1,0 +1,339 @@
+
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Heart, MessageCircle, MapPin, Star, Filter, Search, Bell, User, Settings } from "lucide-react";
+import { Link } from "react-router-dom";
+
+const Dashboard = () => {
+  const [activeTab, setActiveTab] = useState("discover");
+
+  const mockMatches = [
+    {
+      id: 1,
+      name: "Sarah Johnson",
+      age: 25,
+      image: "photo-1649972904349-6e44c42644a7",
+      bio: "Marketing professional looking for a clean, friendly roommate. Love cooking and yoga!",
+      location: "Downtown Manhattan",
+      budget: "$1,500-2,000",
+      compatibility: 92,
+      interests: ["Yoga", "Cooking", "Reading"]
+    },
+    {
+      id: 2,
+      name: "Emily Chen",
+      age: 23,
+      image: "photo-1581091226825-a6a2a5aee158",
+      bio: "Graduate student, quiet but social. Looking for someone who shares similar interests.",
+      location: "Brooklyn Heights",
+      budget: "$1,200-1,600",
+      compatibility: 88,
+      interests: ["Gaming", "Movies", "Coffee"]
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100">
+      {/* Header */}
+      <header className="bg-white/80 backdrop-blur-sm border-b border-purple-100 sticky top-0 z-50">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            <Link to="/" className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+                <Heart className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                LajoSpaces
+              </span>
+            </Link>
+
+            <nav className="hidden md:flex items-center space-x-8">
+              <button
+                onClick={() => setActiveTab("discover")}
+                className={`px-3 py-2 rounded-lg transition-colors ${
+                  activeTab === "discover" 
+                    ? "bg-purple-100 text-purple-700" 
+                    : "text-gray-600 hover:text-purple-600"
+                }`}
+              >
+                Discover
+              </button>
+              <button
+                onClick={() => setActiveTab("matches")}
+                className={`px-3 py-2 rounded-lg transition-colors ${
+                  activeTab === "matches" 
+                    ? "bg-purple-100 text-purple-700" 
+                    : "text-gray-600 hover:text-purple-600"
+                }`}
+              >
+                Matches
+              </button>
+              <button
+                onClick={() => setActiveTab("messages")}
+                className={`px-3 py-2 rounded-lg transition-colors ${
+                  activeTab === "messages" 
+                    ? "bg-purple-100 text-purple-700" 
+                    : "text-gray-600 hover:text-purple-600"
+                }`}
+              >
+                Messages
+              </button>
+            </nav>
+
+            <div className="flex items-center space-x-4">
+              <Button variant="ghost" size="sm">
+                <Bell className="w-5 h-5" />
+              </Button>
+              <Button variant="ghost" size="sm">
+                <User className="w-5 h-5" />
+              </Button>
+              <Button variant="ghost" size="sm">
+                <Settings className="w-5 h-5" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="container mx-auto px-4 py-8">
+        {/* Welcome Section */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, Alex!</h1>
+          <p className="text-gray-600">You have 3 new matches and 5 messages waiting</p>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <Card className="border-0 bg-white/70 backdrop-blur-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Total Matches</p>
+                  <p className="text-2xl font-bold text-purple-600">24</p>
+                </div>
+                <Heart className="w-8 h-8 text-purple-600" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-0 bg-white/70 backdrop-blur-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Active Chats</p>
+                  <p className="text-2xl font-bold text-blue-600">8</p>
+                </div>
+                <MessageCircle className="w-8 h-8 text-blue-600" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-0 bg-white/70 backdrop-blur-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Profile Views</p>
+                  <p className="text-2xl font-bold text-green-600">156</p>
+                </div>
+                <Star className="w-8 h-8 text-green-600" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-0 bg-white/70 backdrop-blur-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Compatibility</p>
+                  <p className="text-2xl font-bold text-orange-600">89%</p>
+                </div>
+                <MapPin className="w-8 h-8 text-orange-600" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column - Discover/Matches */}
+          <div className="lg:col-span-2">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">
+                {activeTab === "discover" ? "Discover Roommates" : "Your Matches"}
+              </h2>
+              <div className="flex items-center space-x-2">
+                <Button variant="outline" size="sm">
+                  <Filter className="w-4 h-4 mr-2" />
+                  Filter
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Search className="w-4 h-4 mr-2" />
+                  Search
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {mockMatches.map((match) => (
+                <Card key={match.id} className="border-0 bg-white/70 backdrop-blur-sm hover:shadow-lg transition-shadow overflow-hidden">
+                  <CardContent className="p-0">
+                    <div className="flex flex-col md:flex-row">
+                      <div className="md:w-1/3">
+                        <img
+                          src={`https://images.unsplash.com/${match.image}?w=300&h=400&fit=crop&crop=face`}
+                          alt={match.name}
+                          className="w-full h-64 md:h-full object-cover"
+                        />
+                      </div>
+                      <div className="md:w-2/3 p-6">
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="text-xl font-semibold">{match.name}, {match.age}</h3>
+                          <Badge className="bg-green-100 text-green-700">
+                            {match.compatibility}% Match
+                          </Badge>
+                        </div>
+                        
+                        <div className="flex items-center text-gray-600 mb-3">
+                          <MapPin className="w-4 h-4 mr-1" />
+                          <span className="text-sm">{match.location}</span>
+                        </div>
+                        
+                        <p className="text-gray-700 mb-4">{match.bio}</p>
+                        
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {match.interests.map((interest, index) => (
+                            <Badge key={index} variant="secondary">
+                              {interest}
+                            </Badge>
+                          ))}
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-600">Budget: {match.budget}</span>
+                          <div className="flex items-center space-x-2">
+                            <Button variant="outline" size="sm">
+                              View Profile
+                            </Button>
+                            <Button size="sm" className="bg-gradient-to-r from-purple-600 to-blue-600">
+                              <Heart className="w-4 h-4 mr-2" />
+                              Like
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Column - Recent Activity */}
+          <div>
+            <Card className="border-0 bg-white/70 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle>Recent Activity</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center space-x-3">
+                  <img
+                    src="https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=40&h=40&fit=crop&crop=face"
+                    alt="Sarah"
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <div>
+                    <p className="text-sm font-medium">Sarah liked your profile</p>
+                    <p className="text-xs text-gray-500">2 hours ago</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-3">
+                  <img
+                    src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=40&h=40&fit=crop&crop=face"
+                    alt="Emily"
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <div>
+                    <p className="text-sm font-medium">New message from Emily</p>
+                    <p className="text-xs text-gray-500">1 day ago</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                    <Star className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Profile viewed 12 times</p>
+                    <p className="text-xs text-gray-500">2 days ago</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 bg-white/70 backdrop-blur-sm mt-6">
+              <CardHeader>
+                <CardTitle>Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button className="w-full justify-start" variant="outline">
+                  <User className="w-4 h-4 mr-2" />
+                  Edit Profile
+                </Button>
+                <Button className="w-full justify-start" variant="outline">
+                  <Search className="w-4 h-4 mr-2" />
+                  Update Preferences
+                </Button>
+                <Button className="w-full justify-start" variant="outline">
+                  <MapPin className="w-4 h-4 mr-2" />
+                  Change Location
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Navigation */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
+        <div className="flex items-center justify-around">
+          <button
+            onClick={() => setActiveTab("discover")}
+            className={`flex flex-col items-center py-2 px-3 rounded-lg ${
+              activeTab === "discover" ? "text-purple-600" : "text-gray-400"
+            }`}
+          >
+            <Search className="w-5 h-5" />
+            <span className="text-xs mt-1">Discover</span>
+          </button>
+          <button
+            onClick={() => setActiveTab("matches")}
+            className={`flex flex-col items-center py-2 px-3 rounded-lg ${
+              activeTab === "matches" ? "text-purple-600" : "text-gray-400"
+            }`}
+          >
+            <Heart className="w-5 h-5" />
+            <span className="text-xs mt-1">Matches</span>
+          </button>
+          <button
+            onClick={() => setActiveTab("messages")}
+            className={`flex flex-col items-center py-2 px-3 rounded-lg ${
+              activeTab === "messages" ? "text-purple-600" : "text-gray-400"
+            }`}
+          >
+            <MessageCircle className="w-5 h-5" />
+            <span className="text-xs mt-1">Messages</span>
+          </button>
+          <button className="flex flex-col items-center py-2 px-3 rounded-lg text-gray-400">
+            <User className="w-5 h-5" />
+            <span className="text-xs mt-1">Profile</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
