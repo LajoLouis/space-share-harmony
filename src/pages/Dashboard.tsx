@@ -3,11 +3,15 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, MessageCircle, MapPin, Star, Filter, Search, Bell, User, Settings } from "lucide-react";
+import { Heart, MessageCircle, MapPin, Star, Filter, Search, Bell, AlertCircle, User } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { UserProfile } from "@/components/auth/UserProfile";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("discover");
+  const { user } = useAuth();
 
   const mockMatches = [
     {
@@ -86,21 +90,31 @@ const Dashboard = () => {
               <Button variant="ghost" size="sm">
                 <Bell className="w-5 h-5" />
               </Button>
-              <Button variant="ghost" size="sm">
-                <User className="w-5 h-5" />
-              </Button>
-              <Button variant="ghost" size="sm">
-                <Settings className="w-5 h-5" />
-              </Button>
+              <UserProfile variant="dropdown" />
             </div>
           </div>
         </div>
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        {/* Verification Alert */}
+        {user && (!user.isEmailVerified || (user.phone && !user.isPhoneVerified)) && (
+          <Alert className="mb-6 border-orange-200 bg-orange-50">
+            <AlertCircle className="h-4 w-4 text-orange-600" />
+            <AlertDescription className="text-orange-800">
+              Please verify your account to access all features.{' '}
+              <Link to="/verify" className="font-medium underline hover:no-underline">
+                Verify now
+              </Link>
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, Alex!</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Welcome back, {user?.firstName || 'User'}!
+          </h1>
           <p className="text-gray-600">You have 3 new matches and 5 messages waiting</p>
         </div>
 
