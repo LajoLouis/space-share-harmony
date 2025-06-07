@@ -3,11 +3,12 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, MessageCircle, MapPin, Star, Filter, Search, Bell, AlertCircle, User } from "lucide-react";
+import { Heart, MessageCircle, MapPin, Star, Filter, Search, Bell, AlertCircle, User, Settings, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { UserProfile } from "@/components/auth/UserProfile";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Progress } from "@/components/ui/progress";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("discover");
@@ -117,6 +118,33 @@ const Dashboard = () => {
           </h1>
           <p className="text-gray-600">You have 3 new matches and 5 messages waiting</p>
         </div>
+
+        {/* Profile Completion Card */}
+        <Card className="mb-8 border-blue-200 bg-gradient-to-r from-blue-50 to-purple-50">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <User className="w-6 h-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Complete Your Profile</h3>
+                  <p className="text-sm text-gray-600">Get better roommate matches by completing your profile</p>
+                  <div className="flex items-center space-x-2 mt-2">
+                    <Progress value={45} className="w-32 h-2" />
+                    <span className="text-sm text-gray-500">45% complete</span>
+                  </div>
+                </div>
+              </div>
+              <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                <Link to="/onboarding" className="flex items-center space-x-2">
+                  <span>Continue Setup</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
