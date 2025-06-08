@@ -206,13 +206,15 @@ const Dashboard = () => {
                 {activeTab === "discover" ? "Discover Roommates" : "Your Matches"}
               </h2>
               <div className="flex items-center space-x-2">
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/discover">
+                    <Search className="w-4 h-4 mr-2" />
+                    Go to Discovery
+                  </Link>
+                </Button>
                 <Button variant="outline" size="sm">
                   <Filter className="w-4 h-4 mr-2" />
                   Filter
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Search className="w-4 h-4 mr-2" />
-                  Search
                 </Button>
               </div>
             </div>
@@ -341,15 +343,13 @@ const Dashboard = () => {
       {/* Mobile Navigation */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
         <div className="flex items-center justify-around">
-          <button
-            onClick={() => setActiveTab("discover")}
-            className={`flex flex-col items-center py-2 px-3 rounded-lg ${
-              activeTab === "discover" ? "text-purple-600" : "text-gray-400"
-            }`}
+          <Link
+            to="/discover"
+            className="flex flex-col items-center py-2 px-3 rounded-lg text-gray-400 hover:text-purple-600"
           >
             <Search className="w-5 h-5" />
             <span className="text-xs mt-1">Discover</span>
-          </button>
+          </Link>
           <button
             onClick={() => setActiveTab("matches")}
             className={`flex flex-col items-center py-2 px-3 rounded-lg ${
