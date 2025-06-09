@@ -179,23 +179,26 @@ export const useLogoutWithConfirmation = () => {
 
 // Hook for token expiration handling
 export const useTokenExpiration = () => {
-  const { logout, checkAuthStatus } = useAuth();
+  const { logout, checkAuthStatus, isAuthenticated } = useAuth();
 
   useEffect(() => {
+    if (!isAuthenticated) return;
+
     const checkTokenExpiration = () => {
-      if (authService.isTokenExpired()) {
+      if (isAuthenticated && authService.isTokenExpired()) {
+        console.log('🔒 Token expired, logging out...');
         logout();
       }
     };
 
-    // Check token expiration every minute
-    const interval = setInterval(checkTokenExpiration, 60000);
+    // Check token expiration every 10 minutes (less aggressive)
+    const interval = setInterval(checkTokenExpiration, 10 * 60 * 1000);
 
-    // Check immediately
-    checkTokenExpiration();
+    // Don't check immediately on mount to avoid logout loops
+    // Only check after the first interval
 
     return () => clearInterval(interval);
-  }, [logout]);
+  }, [logout, isAuthenticated]);
 
   // Manual token refresh
   const refreshToken = async () => {
@@ -213,13 +216,15 @@ export const useTokenExpiration = () => {
 
 // Hook for session management
 export const useSessionManagement = () => {
-  const { logout } = useAuth();
+  const { logout, isAuthenticated } = useAuth();
 
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        // Check if session is still valid when user returns to tab
+      if (document.visibilityState === 'visible' && isAuthenticated) {
+        // Only check if session is still valid when user returns to tab
+        // and they were previously authenticated
         if (authService.isTokenExpired()) {
+          console.log('🔒 Session expired while tab was hidden, logging out...');
           logout();
         }
       }
@@ -232,12 +237,18 @@ export const useSessionManagement = () => {
       }
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    // Only add listeners if user is authenticated
+    if (isAuthenticated) {
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+      window.addEventListener('beforeunload', handleBeforeUnload);
+    }
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [logout]);
+  }, [logout, isAuthenticated]);
 };
+
+// Re-export useAuthActions from the store for convenience
+export { useAuthActions } from '@/stores/authStore';

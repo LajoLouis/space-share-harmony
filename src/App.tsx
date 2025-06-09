@@ -14,6 +14,8 @@ import Verify from "./pages/Verify";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import Discover from "./pages/Discover";
+import Properties from "./pages/Properties";
+import PostProperty from "./pages/PostProperty";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -79,6 +81,22 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Discover />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/properties"
+              element={
+                <ProtectedRoute>
+                  <Properties />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/properties/post"
+              element={
+                <ProtectedRoute>
+                  <PostProperty />
                 </ProtectedRoute>
               }
             />

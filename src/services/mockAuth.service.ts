@@ -31,7 +31,7 @@ const generateMockToken = (userId: string): string => {
     email: mockUsers.find(u => u.id === userId)?.email,
     role: 'user',
     iat: Math.floor(Date.now() / 1000),
-    exp: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60), // 7 days
+    exp: Math.floor(Date.now() / 1000) + (30 * 24 * 60 * 60), // 30 days (much longer)
   }));
   const signature = btoa('mock-signature');
   return `${header}.${payload}.${signature}`;

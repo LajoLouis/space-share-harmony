@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 import { 
   AuthStore, 
   LoginCredentials, 
@@ -12,15 +12,13 @@ import {
 import { authService } from '@/services/auth.service';
 import { toast } from 'sonner';
 
-export const useAuthStore = create<AuthStore>()(
-  devtools(
-    (set, get) => ({
-      // Initial state
-      user: null,
-      token: null,
-      isAuthenticated: false,
-      isLoading: false,
-      error: null,
+export const useAuthStore = create<AuthStore>()((set, get) => ({
+  // Initial state
+  user: null,
+  token: null,
+  isAuthenticated: false,
+  isLoading: false,
+  error: null,
 
       // Actions
       login: async (credentials: LoginCredentials) => {
@@ -93,9 +91,13 @@ export const useAuthStore = create<AuthStore>()(
 
       logout: () => {
         set({ isLoading: true });
-        
+
         try {
           authService.logout();
+
+          // Clear the persisted state
+          localStorage.removeItem('auth-storage');
+
           set({
             user: null,
             token: null,
@@ -103,11 +105,12 @@ export const useAuthStore = create<AuthStore>()(
             isLoading: false,
             error: null,
           });
-          
+
           toast.success('Logged out successfully');
         } catch (error: any) {
           console.error('Logout error:', error);
           // Still clear the state even if API call fails
+          localStorage.removeItem('auth-storage');
           set({
             user: null,
             token: null,
@@ -242,10 +245,10 @@ export const useAuthStore = create<AuthStore>()(
 
       checkAuthStatus: async () => {
         set({ isLoading: true });
-        
+
         try {
           const user = await authService.checkAuthStatus();
-          
+
           if (user) {
             set({
               user,
@@ -255,6 +258,8 @@ export const useAuthStore = create<AuthStore>()(
               error: null,
             });
           } else {
+            // Clear persisted state if auth check fails
+            localStorage.removeItem('auth-storage');
             set({
               user: null,
               token: null,
@@ -265,6 +270,8 @@ export const useAuthStore = create<AuthStore>()(
           }
         } catch (error: any) {
           console.error('Auth status check failed:', error);
+          // Clear persisted state on error
+          localStorage.removeItem('auth-storage');
           set({
             user: null,
             token: null,
@@ -274,25 +281,38 @@ export const useAuthStore = create<AuthStore>()(
           });
         }
       },
-    }),
-    {
-      name: 'auth-store',
-      // Only store non-sensitive data in devtools
-      partialize: (state) => ({
-        isAuthenticated: state.isAuthenticated,
-        isLoading: state.isLoading,
-        error: state.error,
-        user: state.user ? {
-          id: state.user.id,
-          email: state.user.email,
-          firstName: state.user.firstName,
-          lastName: state.user.lastName,
-          role: state.user.role,
-        } : null,
-      }),
-    }
-  )
-);
+
+      // Initialize auth state from storage
+      initializeFromStorage: () => {
+        try {
+          const storedUser = authService.getStoredUser();
+          const storedToken = authService.getStoredToken();
+
+          if (storedUser && storedToken && !authService.isTokenExpired()) {
+            set({
+              user: storedUser,
+              token: storedToken,
+              isAuthenticated: true,
+              isLoading: false,
+              error: null,
+            });
+
+            console.log('✅ Auth state restored from storage');
+            return true;
+          } else {
+            // Clear invalid stored data
+            localStorage.removeItem('auth-storage');
+            authService.logout();
+            console.log('❌ Invalid stored auth data cleared');
+            return false;
+          }
+        } catch (error) {
+          console.error('Failed to initialize auth from storage:', error);
+          localStorage.removeItem('auth-storage');
+          return false;
+        }
+      }
+    }));
 
 // Selectors for common use cases
 export const useAuth = () => {
@@ -317,5 +337,6 @@ export const useAuthActions = () => {
     resetPassword: store.resetPassword,
     clearError: store.clearError,
     checkAuthStatus: store.checkAuthStatus,
+    initializeFromStorage: store.initializeFromStorage,
   };
 };

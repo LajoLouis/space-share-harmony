@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth, useSessionManagement, useTokenExpiration } from '@/hooks/useAuth';
+import { useAuth, useAuthActions, useSessionManagement, useTokenExpiration } from '@/hooks/useAuth';
 import { authService } from '@/services/auth.service';
 import { Loader2 } from 'lucide-react';
 
@@ -8,12 +8,13 @@ interface AuthProviderProps {
   fallback?: React.ReactNode;
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ 
-  children, 
-  fallback 
+export const AuthProvider: React.FC<AuthProviderProps> = ({
+  children,
+  fallback
 }) => {
   const [isInitializing, setIsInitializing] = useState(true);
   const { checkAuthStatus } = useAuth();
+  const { initializeFromStorage } = useAuthActions();
 
   // Initialize session management and token expiration handling
   useSessionManagement();
@@ -22,24 +23,41 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // Initialize auth service and check for existing session
-        const user = await authService.initialize();
-        
-        if (user) {
-          // Update the auth store with the current user
+        console.log('🔄 Initializing authentication...');
+
+        // First try to restore from persisted storage
+        const restoredFromStorage = initializeFromStorage();
+
+        if (restoredFromStorage) {
+          console.log('✅ Auth restored from storage, verifying...');
+          // Verify the restored session is still valid
           await checkAuthStatus();
+        } else {
+          console.log('❌ No valid stored auth, checking service...');
+          // Initialize auth service and check for existing session
+          const user = await authService.initialize();
+
+          if (user) {
+            // Update the auth store with the current user
+            await checkAuthStatus();
+          }
         }
       } catch (error) {
-        console.error('Auth initialization failed:', error);
+        console.error('❌ Auth initialization failed:', error);
         // Clear any invalid auth data
-        authService.logout();
+        try {
+          authService.logout();
+        } catch (logoutError) {
+          console.error('Error during cleanup logout:', logoutError);
+        }
       } finally {
         setIsInitializing(false);
+        console.log('✅ Auth initialization complete');
       }
     };
 
     initializeAuth();
-  }, [checkAuthStatus]);
+  }, [checkAuthStatus, initializeFromStorage]);
 
   // Show loading screen while initializing
   if (isInitializing) {

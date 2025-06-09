@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, MessageCircle, MapPin, Star, Filter, Search, Bell, AlertCircle, User, Settings, ArrowRight } from "lucide-react";
+import { Heart, MessageCircle, MapPin, Star, Filter, Search, Bell, AlertCircle, User, Settings, ArrowRight, Home, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { UserProfile } from "@/components/auth/UserProfile";
@@ -322,6 +322,18 @@ const Dashboard = () => {
                 <CardTitle>Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
+                <Button className="w-full justify-start" variant="outline" asChild>
+                  <Link to="/properties">
+                    <Home className="w-4 h-4 mr-2" />
+                    Browse Properties
+                  </Link>
+                </Button>
+                <Button className="w-full justify-start" variant="outline" asChild>
+                  <Link to="/properties/post">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Post Property
+                  </Link>
+                </Button>
                 <Button className="w-full justify-start" variant="outline">
                   <User className="w-4 h-4 mr-2" />
                   Edit Profile
@@ -329,10 +341,6 @@ const Dashboard = () => {
                 <Button className="w-full justify-start" variant="outline">
                   <Search className="w-4 h-4 mr-2" />
                   Update Preferences
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <MapPin className="w-4 h-4 mr-2" />
-                  Change Location
                 </Button>
               </CardContent>
             </Card>
