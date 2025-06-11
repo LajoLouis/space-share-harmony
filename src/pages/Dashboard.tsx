@@ -75,16 +75,16 @@ const Dashboard = () => {
               >
                 Matches
               </button>
-              <button
-                onClick={() => setActiveTab("messages")}
+              <Link
+                to="/messages"
                 className={`px-3 py-2 rounded-lg transition-colors ${
-                  activeTab === "messages" 
-                    ? "bg-purple-100 text-purple-700" 
+                  activeTab === "messages"
+                    ? "bg-purple-100 text-purple-700"
                     : "text-gray-600 hover:text-purple-600"
                 }`}
               >
                 Messages
-              </button>
+              </Link>
             </nav>
 
             <div className="flex items-center space-x-4">
@@ -334,6 +334,12 @@ const Dashboard = () => {
                     Post Property
                   </Link>
                 </Button>
+                <Button className="w-full justify-start" variant="outline" asChild>
+                  <Link to="/messages">
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    Messages
+                  </Link>
+                </Button>
                 <Button className="w-full justify-start" variant="outline">
                   <User className="w-4 h-4 mr-2" />
                   Edit Profile
@@ -367,15 +373,15 @@ const Dashboard = () => {
             <Heart className="w-5 h-5" />
             <span className="text-xs mt-1">Matches</span>
           </button>
-          <button
-            onClick={() => setActiveTab("messages")}
+          <Link
+            to="/messages"
             className={`flex flex-col items-center py-2 px-3 rounded-lg ${
               activeTab === "messages" ? "text-purple-600" : "text-gray-400"
             }`}
           >
             <MessageCircle className="w-5 h-5" />
             <span className="text-xs mt-1">Messages</span>
-          </button>
+          </Link>
           <button className="flex flex-col items-center py-2 px-3 rounded-lg text-gray-400">
             <User className="w-5 h-5" />
             <span className="text-xs mt-1">Profile</span>
