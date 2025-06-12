@@ -53,7 +53,7 @@ const PropertyDetails: React.FC = () => {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
 
-  const { getPropertyById, toggleFavorite, favorites } = usePropertyStore();
+  const { getPropertyById, toggleFavorite, isFavorite } = usePropertyStore();
   const { createConversation } = useMessageStore();
 
   // Load property data
@@ -71,7 +71,7 @@ const PropertyDetails: React.FC = () => {
         
         if (propertyData) {
           setProperty(propertyData);
-          setIsFavorited(favorites.includes(id));
+          setIsFavorited(isFavorite(id));
         } else {
           setError('Property not found');
         }
@@ -83,7 +83,7 @@ const PropertyDetails: React.FC = () => {
     };
 
     loadProperty();
-  }, [id, getPropertyById, favorites]);
+  }, [id, getPropertyById, isFavorite]);
 
   const handleFavorite = async () => {
     if (!property) return;
@@ -102,7 +102,7 @@ const PropertyDetails: React.FC = () => {
 
     try {
       const conversationId = await createConversation({
-        participantId: property.owner.id,
+        participantId: property.ownerId,
         propertyId: property.id,
         initialMessage: `Hi! I'm interested in your property listing "${property.title}". Could you tell me more about it?`,
         type: ConversationType.PROPERTY_INQUIRY
@@ -136,14 +136,14 @@ const PropertyDetails: React.FC = () => {
 
   const nextImage = () => {
     if (!property?.photos) return;
-    setCurrentImageIndex((prev) => 
+    setCurrentImageIndex((prev) =>
       prev === property.photos.length - 1 ? 0 : prev + 1
     );
   };
 
   const previousImage = () => {
     if (!property?.photos) return;
-    setCurrentImageIndex((prev) => 
+    setCurrentImageIndex((prev) =>
       prev === 0 ? property.photos.length - 1 : prev - 1
     );
   };
@@ -252,7 +252,7 @@ const PropertyDetails: React.FC = () => {
                 {property.photos && property.photos.length > 0 ? (
                   <>
                     <img
-                      src={property.photos[currentImageIndex]}
+                      src={property.photos[currentImageIndex].url}
                       alt={`${property.title} - Image ${currentImageIndex + 1}`}
                       className="w-full h-96 object-cover cursor-pointer"
                       onClick={() => setIsImageModalOpen(true)}
@@ -310,7 +310,7 @@ const PropertyDetails: React.FC = () => {
                     {property.photos.map((photo, index) => (
                       <img
                         key={index}
-                        src={photo}
+                        src={photo.url}
                         alt={`Thumbnail ${index + 1}`}
                         className={`w-20 h-20 object-cover rounded-lg cursor-pointer flex-shrink-0 ${
                           index === currentImageIndex ? 'ring-2 ring-blue-500' : ''
@@ -432,30 +432,78 @@ const PropertyDetails: React.FC = () => {
                 <div>
                   <h3 className="text-lg font-semibold mb-3">Amenities</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {property.amenities.basic.map((amenity, index) => (
-                      <div key={index} className="flex items-center space-x-2">
-                        {getAmenityIcon(amenity)}
-                        <span className="text-gray-700">{amenity}</span>
+                    {property.amenities.wifi && (
+                      <div className="flex items-center space-x-2">
+                        <Wifi className="w-4 h-4 text-gray-600" />
+                        <span className="text-gray-700">WiFi</span>
                       </div>
-                    ))}
-                    {property.amenities.kitchen.map((amenity, index) => (
-                      <div key={`kitchen-${index}`} className="flex items-center space-x-2">
+                    )}
+                    {property.amenities.airConditioning && (
+                      <div className="flex items-center space-x-2">
+                        <Check className="w-4 h-4 text-gray-600" />
+                        <span className="text-gray-700">Air Conditioning</span>
+                      </div>
+                    )}
+                    {property.amenities.heating && (
+                      <div className="flex items-center space-x-2">
+                        <Check className="w-4 h-4 text-gray-600" />
+                        <span className="text-gray-700">Heating</span>
+                      </div>
+                    )}
+                    {property.amenities.laundry && property.amenities.laundry !== 'none' && (
+                      <div className="flex items-center space-x-2">
+                        <Check className="w-4 h-4 text-gray-600" />
+                        <span className="text-gray-700">Laundry ({property.amenities.laundry})</span>
+                      </div>
+                    )}
+                    {property.amenities.kitchen && (
+                      <div className="flex items-center space-x-2">
                         <Utensils className="w-4 h-4 text-gray-600" />
-                        <span className="text-gray-700">{amenity}</span>
+                        <span className="text-gray-700">Kitchen ({property.amenities.kitchen})</span>
                       </div>
-                    ))}
-                    {property.amenities.bathroom.map((amenity, index) => (
-                      <div key={`bathroom-${index}`} className="flex items-center space-x-2">
-                        <Bath className="w-4 h-4 text-gray-600" />
-                        <span className="text-gray-700">{amenity}</span>
+                    )}
+                    {property.amenities.parking && (
+                      <div className="flex items-center space-x-2">
+                        <Car className="w-4 h-4 text-gray-600" />
+                        <span className="text-gray-700">Parking</span>
                       </div>
-                    ))}
-                    {property.amenities.building.map((amenity, index) => (
-                      <div key={`building-${index}`} className="flex items-center space-x-2">
-                        <Home className="w-4 h-4 text-gray-600" />
-                        <span className="text-gray-700">{amenity}</span>
+                    )}
+                    {property.amenities.gym && (
+                      <div className="flex items-center space-x-2">
+                        <Dumbbell className="w-4 h-4 text-gray-600" />
+                        <span className="text-gray-700">Gym</span>
                       </div>
-                    ))}
+                    )}
+                    {property.amenities.pool && (
+                      <div className="flex items-center space-x-2">
+                        <Check className="w-4 h-4 text-gray-600" />
+                        <span className="text-gray-700">Pool</span>
+                      </div>
+                    )}
+                    {property.amenities.petFriendly && (
+                      <div className="flex items-center space-x-2">
+                        <PawPrint className="w-4 h-4 text-gray-600" />
+                        <span className="text-gray-700">Pet Friendly</span>
+                      </div>
+                    )}
+                    {property.amenities.balcony && (
+                      <div className="flex items-center space-x-2">
+                        <Check className="w-4 h-4 text-gray-600" />
+                        <span className="text-gray-700">Balcony</span>
+                      </div>
+                    )}
+                    {property.amenities.dishwasher && (
+                      <div className="flex items-center space-x-2">
+                        <Check className="w-4 h-4 text-gray-600" />
+                        <span className="text-gray-700">Dishwasher</span>
+                      </div>
+                    )}
+                    {property.amenities.furnished && (
+                      <div className="flex items-center space-x-2">
+                        <Check className="w-4 h-4 text-gray-600" />
+                        <span className="text-gray-700">Furnished</span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -465,12 +513,16 @@ const PropertyDetails: React.FC = () => {
                 <div>
                   <h3 className="text-lg font-semibold mb-3">House Rules</h3>
                   <div className="space-y-2">
-                    {property.houseRules.map((rule, index) => (
-                      <div key={index} className="flex items-start space-x-2">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
-                        <span className="text-gray-700">{rule}</span>
-                      </div>
-                    ))}
+                    {property.rules && property.rules.length > 0 ? (
+                      property.rules.map((rule, index) => (
+                        <div key={index} className="flex items-start space-x-2">
+                          <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
+                          <span className="text-gray-700">{rule}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-gray-600">No specific house rules listed.</p>
+                    )}
                   </div>
                 </div>
 
@@ -518,24 +570,24 @@ const PropertyDetails: React.FC = () => {
               <CardContent className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <Avatar className="w-12 h-12">
-                    <AvatarImage src={property.owner.avatar} />
+                    <AvatarImage src={property.ownerProfile.avatar} />
                     <AvatarFallback>
-                      {property.owner.firstName[0]}{property.owner.lastName[0]}
+                      {property.ownerProfile.firstName[0]}{property.ownerProfile.lastName[0]}
                     </AvatarFallback>
                   </Avatar>
                   <div>
                     <div className="flex items-center space-x-2">
                       <h4 className="font-semibold">
-                        {property.owner.firstName} {property.owner.lastName}
+                        {property.ownerProfile.firstName} {property.ownerProfile.lastName}
                       </h4>
-                      {property.owner.isVerified && (
+                      {property.ownerProfile.isVerified && (
                         <Badge variant="secondary" className="text-xs">
                           <Check className="w-3 h-3 mr-1" />
                           Verified
                         </Badge>
                       )}
                     </div>
-                    <p className="text-sm text-gray-600">{property.owner.email}</p>
+                    <p className="text-sm text-gray-600">{property.ownerProfile.email}</p>
                   </div>
                 </div>
 
@@ -548,11 +600,11 @@ const PropertyDetails: React.FC = () => {
                     <span>Message Owner</span>
                   </Button>
                   
-                  {property.owner.phone && (
+                  {property.ownerProfile.phone && (
                     <Button
                       variant="outline"
                       className="w-full flex items-center space-x-2"
-                      onClick={() => window.open(`tel:${property.owner.phone}`)}
+                      onClick={() => window.open(`tel:${property.ownerProfile.phone}`)}
                     >
                       <Phone className="w-4 h-4" />
                       <span>Call Owner</span>
@@ -607,7 +659,7 @@ const PropertyDetails: React.FC = () => {
         <PropertyImageModal
           isOpen={isImageModalOpen}
           onClose={() => setIsImageModalOpen(false)}
-          images={property.photos}
+          images={property.photos.map(photo => photo.url)}
           initialIndex={currentImageIndex}
           propertyTitle={property.title}
         />
