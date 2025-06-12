@@ -388,10 +388,13 @@ const Dashboard = () => {
             <MessageCircle className="w-5 h-5" />
             <span className="text-xs mt-1">Messages</span>
           </Link>
-          <button className="flex flex-col items-center py-2 px-3 rounded-lg text-gray-400">
+          <Link
+            to="/profile"
+            className="flex flex-col items-center py-2 px-3 rounded-lg text-gray-400 hover:text-purple-600"
+          >
             <User className="w-5 h-5" />
             <span className="text-xs mt-1">Profile</span>
-          </button>
+          </Link>
         </div>
       </div>
     </div>
