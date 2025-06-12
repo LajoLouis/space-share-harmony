@@ -8,11 +8,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  ArrowLeft, 
-  Save, 
-  Edit, 
-  Upload, 
+import {
+  ArrowLeft,
+  Save,
+  Edit,
+  Upload,
   Camera,
   User,
   MapPin,
@@ -25,7 +25,9 @@ import {
   AlertCircle,
   Star,
   Heart,
-  MessageCircle
+  MessageCircle,
+  Wand2,
+  X
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfileStore } from '@/stores/profileStore';
@@ -33,14 +35,17 @@ import { profileService } from '@/services/profile.service';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { OnboardingWizard } from '@/components/onboarding/OnboardingWizard';
+import { Progress } from '@/components/ui/progress';
 
 export default function Profile() {
   const navigate = useNavigate();
   const { user, getFullName, getUserInitials } = useAuth();
-  const { profile, isLoading, setProfile } = useProfileStore();
-  
+  const { profile, isLoading, setProfile, calculateCompletionScore } = useProfileStore();
+
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [formData, setFormData] = useState({
     bio: '',
     occupation: '',
@@ -124,6 +129,32 @@ export default function Profile() {
     setIsEditing(false);
   };
 
+  const handleOnboardingComplete = () => {
+    toast.success('Profile completed successfully!');
+    setShowOnboarding(false);
+    loadProfile(); // Reload profile to get updated data
+  };
+
+  const handleOnboardingSkip = () => {
+    setShowOnboarding(false);
+  };
+
+  const getProfileCompletion = () => {
+    if (!profile) return { score: 0, missingFields: [] };
+
+    const score = calculateCompletionScore();
+    const missingFields: string[] = [];
+
+    if (!profile.bio || profile.bio.length < 50) missingFields.push('Bio');
+    if (!profile.photos || profile.photos.length === 0) missingFields.push('Photos');
+    if (!profile.interests || profile.interests.length === 0) missingFields.push('Interests');
+    if (!profile.roommate?.budgetRange?.min || !profile.roommate?.budgetRange?.max) missingFields.push('Budget');
+    if (!profile.occupation) missingFields.push('Occupation');
+    if (!profile.education) missingFields.push('Education');
+
+    return { score, missingFields };
+  };
+
   const handleInputChange = (field: string, value: string) => {
     if (field.includes('.')) {
       const [parent, child] = field.split('.');
@@ -164,6 +195,32 @@ export default function Profile() {
 
   const fullName = getFullName();
   const initials = getUserInitials();
+  const completion = getProfileCompletion();
+
+  // Show onboarding wizard if requested
+  if (showOnboarding) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-3xl font-bold text-gray-900">Complete Your Profile</h1>
+            <Button
+              variant="ghost"
+              onClick={() => setShowOnboarding(false)}
+              className="flex items-center space-x-2"
+            >
+              <X className="w-4 h-4" />
+              <span>Close</span>
+            </Button>
+          </div>
+          <OnboardingWizard
+            onComplete={handleOnboardingComplete}
+            onSkip={handleOnboardingSkip}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -186,6 +243,15 @@ export default function Profile() {
               </div>
             </div>
             <div className="flex items-center space-x-3">
+              {completion.score < 80 && (
+                <Button
+                  onClick={() => setShowOnboarding(true)}
+                  className="bg-purple-600 hover:bg-purple-700"
+                >
+                  <Wand2 className="w-4 h-4 mr-2" />
+                  Complete Profile
+                </Button>
+              )}
               {isEditing ? (
                 <>
                   <Button variant="outline" onClick={handleCancel}>
@@ -208,6 +274,40 @@ export default function Profile() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
+        {/* Profile Completion Alert */}
+        {completion.score < 80 && (
+          <Alert className="mb-8 border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50">
+            <Wand2 className="h-4 w-4 text-purple-600" />
+            <AlertDescription>
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="font-medium text-purple-900 mb-2">
+                    Complete your profile to get better roommate matches!
+                  </p>
+                  <div className="flex items-center space-x-3">
+                    <Progress value={completion.score} className="w-32 h-2" />
+                    <span className="text-sm text-purple-700">
+                      {completion.score}% complete
+                    </span>
+                  </div>
+                  {completion.missingFields.length > 0 && (
+                    <p className="text-sm text-purple-600 mt-1">
+                      Missing: {completion.missingFields.join(', ')}
+                    </p>
+                  )}
+                </div>
+                <Button
+                  onClick={() => setShowOnboarding(true)}
+                  className="bg-purple-600 hover:bg-purple-700 ml-4"
+                >
+                  <Wand2 className="w-4 h-4 mr-2" />
+                  Complete Now
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
@@ -408,6 +508,12 @@ export default function Profile() {
                   <div>
                     <h3 className="font-semibold text-lg">{fullName}</h3>
                     <p className="text-gray-600">{user?.email}</p>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <Progress value={completion.score} className="w-20 h-1" />
+                      <span className="text-xs text-gray-500">
+                        {completion.score}% complete
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -456,6 +562,15 @@ export default function Profile() {
                 <CardTitle>Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
+                {completion.score < 80 && (
+                  <Button
+                    onClick={() => setShowOnboarding(true)}
+                    className="w-full justify-start bg-purple-600 hover:bg-purple-700"
+                  >
+                    <Wand2 className="w-4 h-4 mr-2" />
+                    Complete Profile ({completion.score}%)
+                  </Button>
+                )}
                 <Button variant="outline" className="w-full justify-start">
                   <MessageCircle className="w-4 h-4 mr-2" />
                   View Messages
@@ -467,6 +582,10 @@ export default function Profile() {
                 <Button variant="outline" className="w-full justify-start">
                   <Star className="w-4 h-4 mr-2" />
                   Discovery Settings
+                </Button>
+                <Button variant="outline" className="w-full justify-start">
+                  <Camera className="w-4 h-4 mr-2" />
+                  Update Photos
                 </Button>
               </CardContent>
             </Card>
