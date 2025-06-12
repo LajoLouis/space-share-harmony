@@ -16,6 +16,7 @@ import Dashboard from "./pages/Dashboard";
 import Discover from "./pages/Discover";
 import Properties from "./pages/Properties";
 import PostProperty from "./pages/PostProperty";
+import PropertyDetails from "./pages/PropertyDetails";
 import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
 
@@ -98,6 +99,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <PostProperty />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/properties/:id"
+              element={
+                <ProtectedRoute>
+                  <PropertyDetails />
                 </ProtectedRoute>
               }
             />

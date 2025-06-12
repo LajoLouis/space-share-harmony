@@ -83,9 +83,11 @@ interface PropertyStore extends PropertyState {
   setSubmitting: (submitting: boolean) => void;
   
   // Utility Actions
-  getPropertyById: (id: string) => Property | null;
+  getPropertyById: (id: string) => Promise<Property | null>;
+  getPropertyByIdSync: (id: string) => Property | null;
   getUserPropertyById: (id: string) => Property | null;
   getInquiryById: (id: string) => PropertyInquiry | null;
+  toggleFavorite: (propertyId: string) => Promise<void>;
   clearAllData: () => void;
 }
 
@@ -318,18 +320,54 @@ export const usePropertyStore = create<PropertyStore>()(
         },
         
         // Utility Actions
-        getPropertyById: (id) => {
+        getPropertyById: async (id) => {
+          // First check local state
+          const localProperty = get().properties.find(p => p.id === id);
+          if (localProperty) {
+            return localProperty;
+          }
+
+          // If not found locally, fetch from service
+          try {
+            const { mockPropertyService } = await import('@/services/mockProperty.service');
+            const response = await mockPropertyService.getPropertyById(id);
+            if (response.success && response.data) {
+              // Add to local state
+              set((state) => ({
+                properties: [response.data, ...state.properties.filter(p => p.id !== id)]
+              }));
+              return response.data;
+            }
+          } catch (error) {
+            console.error('Failed to fetch property:', error);
+          }
+
+          return null;
+        },
+
+        getPropertyByIdSync: (id) => {
           return get().properties.find(p => p.id === id) || null;
         },
-        
+
         getUserPropertyById: (id) => {
           return get().userProperties.find(p => p.id === id) || null;
         },
-        
+
         getInquiryById: (id) => {
           return get().inquiries.find(i => i.id === id) || null;
         },
-        
+
+        toggleFavorite: async (propertyId) => {
+          const state = get();
+          const isFavorited = state.favoriteProperties.some(p => p.id === propertyId);
+
+          if (isFavorited) {
+            get().removeFromFavorites(propertyId);
+          } else {
+            get().addToFavorites(propertyId);
+          }
+        },
+
         clearAllData: () => {
           set(initialState);
         },

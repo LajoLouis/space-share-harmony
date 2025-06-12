@@ -190,15 +190,19 @@ export const useMessageStore = create<MessageStore>()(
           if (response.success) {
             const state = get();
             const conversationId = response.data.conversationId;
-            
-            // Add message to local state
+
+            // Add message to local state (optimistic update)
             const existingMessages = state.messages[conversationId] || [];
-            set({
-              messages: {
-                ...state.messages,
-                [conversationId]: [...existingMessages, response.data]
-              }
-            });
+            const messageExists = existingMessages.some(msg => msg.id === response.data.id);
+
+            if (!messageExists) {
+              set({
+                messages: {
+                  ...state.messages,
+                  [conversationId]: [...existingMessages, response.data]
+                }
+              });
+            }
 
             // Update conversation in list
             const updatedConversations = state.conversations.map(conv => {
@@ -225,7 +229,7 @@ export const useMessageStore = create<MessageStore>()(
               const otherParticipant = get().getOtherParticipant(
                 state.conversations.find(c => c.conversation.id === conversationId)?.conversation!
               );
-              
+
               if (otherParticipant) {
                 const responses = [
                   "Thanks for reaching out!",
@@ -234,7 +238,7 @@ export const useMessageStore = create<MessageStore>()(
                   "I'll check and let you know.",
                   "That works for me."
                 ];
-                
+
                 setTimeout(() => {
                   mockMessageService.simulateIncomingMessage(
                     conversationId,
@@ -345,43 +349,53 @@ export const useMessageStore = create<MessageStore>()(
       // Handle real-time events
       handleRealtimeEvent: (event: MessageEvent) => {
         const state = get();
-        
+
         switch (event.type) {
           case 'message_received':
             const message = event.data as Message;
+            const currentUser = mockMessageService.getCurrentUser();
+
+            // Don't handle real-time events for current user's own messages
+            if (message.senderId === currentUser?.id) {
+              break;
+            }
+
             const existingMessages = state.messages[message.conversationId] || [];
-            
-            // Add message to conversation
-            set({
-              messages: {
-                ...state.messages,
-                [message.conversationId]: [...existingMessages, message]
-              }
-            });
+            const messageExists = existingMessages.some(msg => msg.id === message.id);
 
-            // Update conversation list
-            const updatedConversations = state.conversations.map(conv => {
-              if (conv.conversation.id === message.conversationId) {
-                return {
-                  ...conv,
-                  lastMessage: message,
-                  unreadCount: conv.unreadCount + 1,
-                  conversation: {
-                    ...conv.conversation,
-                    updatedAt: message.timestamp
-                  }
-                };
-              }
-              return conv;
-            });
+            // Only add message if it doesn't already exist
+            if (!messageExists) {
+              set({
+                messages: {
+                  ...state.messages,
+                  [message.conversationId]: [...existingMessages, message]
+                }
+              });
 
-            set({ conversations: updatedConversations });
+              // Update conversation list
+              const updatedConversations = state.conversations.map(conv => {
+                if (conv.conversation.id === message.conversationId) {
+                  return {
+                    ...conv,
+                    lastMessage: message,
+                    unreadCount: conv.unreadCount + 1,
+                    conversation: {
+                      ...conv.conversation,
+                      updatedAt: message.timestamp
+                    }
+                  };
+                }
+                return conv;
+              });
 
-            // Show notification if not in active conversation
-            if (state.activeConversationId !== message.conversationId) {
-              const sender = mockMessageService.getUserById(message.senderId);
-              if (sender) {
-                toast.info(`New message from ${sender.firstName} ${sender.lastName}`);
+              set({ conversations: updatedConversations });
+
+              // Show notification if not in active conversation
+              if (state.activeConversationId !== message.conversationId) {
+                const sender = mockMessageService.getUserById(message.senderId);
+                if (sender) {
+                  toast.info(`New message from ${sender.firstName} ${sender.lastName}`);
+                }
               }
             }
             break;

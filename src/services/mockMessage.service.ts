@@ -372,12 +372,8 @@ class MockMessageService {
       conversation.lastMessage = newMessage;
     }
 
-    // Simulate real-time event
-    this.emitEvent({
-      type: 'message_received',
-      data: newMessage,
-      timestamp
-    });
+    // Don't emit real-time event for current user's own messages
+    // The UI will handle the optimistic update
 
     return {
       success: true,
