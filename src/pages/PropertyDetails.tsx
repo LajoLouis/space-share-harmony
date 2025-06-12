@@ -513,13 +513,49 @@ const PropertyDetails: React.FC = () => {
                 <div>
                   <h3 className="text-lg font-semibold mb-3">House Rules</h3>
                   <div className="space-y-2">
-                    {property.rules && property.rules.length > 0 ? (
-                      property.rules.map((rule, index) => (
-                        <div key={index} className="flex items-start space-x-2">
-                          <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
-                          <span className="text-gray-700">{rule}</span>
+                    {property.rules ? (
+                      <>
+                        <div className="flex items-start space-x-2">
+                          <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${property.rules.petsAllowed ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                          <span className="text-gray-700">
+                            Pets {property.rules.petsAllowed ? 'allowed' : 'not allowed'}
+                          </span>
                         </div>
-                      ))
+                        <div className="flex items-start space-x-2">
+                          <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${property.rules.smokingAllowed ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                          <span className="text-gray-700">
+                            Smoking {property.rules.smokingAllowed ? 'allowed' : 'not allowed'}
+                          </span>
+                        </div>
+                        <div className="flex items-start space-x-2">
+                          <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${property.rules.partiesAllowed ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                          <span className="text-gray-700">
+                            Parties {property.rules.partiesAllowed ? 'allowed' : 'not allowed'}
+                          </span>
+                        </div>
+                        <div className="flex items-start space-x-2">
+                          <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${property.rules.guestsAllowed ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                          <span className="text-gray-700">
+                            Guests {property.rules.guestsAllowed ? 'allowed' : 'not allowed'}
+                          </span>
+                        </div>
+                        {property.rules.quietHours && (
+                          <div className="flex items-start space-x-2">
+                            <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <span className="text-gray-700">
+                              Quiet hours: {property.rules.quietHours.start} - {property.rules.quietHours.end}
+                            </span>
+                          </div>
+                        )}
+                        {property.rules.additionalRules && property.rules.additionalRules.length > 0 && (
+                          property.rules.additionalRules.map((rule, index) => (
+                            <div key={index} className="flex items-start space-x-2">
+                              <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
+                              <span className="text-gray-700">{rule}</span>
+                            </div>
+                          ))
+                        )}
+                      </>
                     ) : (
                       <p className="text-gray-600">No specific house rules listed.</p>
                     )}
@@ -542,11 +578,11 @@ const PropertyDetails: React.FC = () => {
                       <Home className="w-4 h-4 text-gray-600" />
                       <span className="text-gray-700">{property.location.city}, {property.location.state} {property.location.zipCode}</span>
                     </div>
-                    {property.location.nearbyTransportation && property.location.nearbyTransportation.length > 0 && (
+                    {property.transportation?.nearbyTransit && property.transportation.nearbyTransit.length > 0 && (
                       <div>
                         <h4 className="font-medium text-gray-900 mb-2">Nearby Transportation</h4>
                         <div className="space-y-1">
-                          {property.location.nearbyTransportation.map((transport, index) => (
+                          {property.transportation.nearbyTransit.map((transport, index) => (
                             <div key={index} className="text-sm text-gray-600">
                               • {transport}
                             </div>
@@ -570,7 +606,7 @@ const PropertyDetails: React.FC = () => {
               <CardContent className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <Avatar className="w-12 h-12">
-                    <AvatarImage src={property.ownerProfile.avatar} />
+                    <AvatarImage src={property.ownerProfile.photo} />
                     <AvatarFallback>
                       {property.ownerProfile.firstName[0]}{property.ownerProfile.lastName[0]}
                     </AvatarFallback>
@@ -587,7 +623,9 @@ const PropertyDetails: React.FC = () => {
                         </Badge>
                       )}
                     </div>
-                    <p className="text-sm text-gray-600">{property.ownerProfile.email}</p>
+                    <p className="text-sm text-gray-600">
+                      Response rate: {property.ownerProfile.responseRate}% • {property.ownerProfile.responseTime}
+                    </p>
                   </div>
                 </div>
 
