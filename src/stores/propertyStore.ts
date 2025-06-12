@@ -86,6 +86,7 @@ interface PropertyStore extends PropertyState {
   getPropertyById: (id: string) => Promise<Property | null>;
   getPropertyByIdSync: (id: string) => Property | null;
   getUserPropertyById: (id: string) => Property | null;
+  getUserProperties: () => Promise<void>;
   getInquiryById: (id: string) => PropertyInquiry | null;
   toggleFavorite: (propertyId: string) => Promise<void>;
   clearAllData: () => void;
@@ -351,6 +352,27 @@ export const usePropertyStore = create<PropertyStore>()(
 
         getUserPropertyById: (id) => {
           return get().userProperties.find(p => p.id === id) || null;
+        },
+
+        getUserProperties: async () => {
+          try {
+            set({ isLoading: true, error: null });
+
+            // In a real app, this would fetch user's properties from the API
+            // For now, we'll simulate this by filtering properties by current user
+            const allProperties = get().properties;
+            const userProps = allProperties.filter(p => p.ownerId === 'current_user');
+
+            set({
+              userProperties: userProps,
+              isLoading: false
+            });
+          } catch (error: any) {
+            set({
+              error: error.message || 'Failed to fetch user properties',
+              isLoading: false
+            });
+          }
         },
 
         getInquiryById: (id) => {

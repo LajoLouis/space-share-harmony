@@ -17,6 +17,8 @@ import Discover from "./pages/Discover";
 import Properties from "./pages/Properties";
 import PostProperty from "./pages/PostProperty";
 import PropertyDetails from "./pages/PropertyDetails";
+import PropertyManagement from "./pages/PropertyManagement";
+import EditProperty from "./pages/EditProperty";
 import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
 
@@ -107,6 +109,22 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <PropertyDetails />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/properties/manage"
+              element={
+                <ProtectedRoute>
+                  <PropertyManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/properties/:id/edit"
+              element={
+                <ProtectedRoute>
+                  <EditProperty />
                 </ProtectedRoute>
               }
             />

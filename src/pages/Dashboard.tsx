@@ -335,6 +335,12 @@ const Dashboard = () => {
                   </Link>
                 </Button>
                 <Button className="w-full justify-start" variant="outline" asChild>
+                  <Link to="/properties/manage">
+                    <Settings className="w-4 h-4 mr-2" />
+                    Manage Properties
+                  </Link>
+                </Button>
+                <Button className="w-full justify-start" variant="outline" asChild>
                   <Link to="/messages">
                     <MessageCircle className="w-4 h-4 mr-2" />
                     Messages
