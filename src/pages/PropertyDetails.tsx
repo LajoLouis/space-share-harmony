@@ -209,7 +209,8 @@ const PropertyDetails: React.FC = () => {
               className="flex items-center space-x-2"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Back to Properties</span>
+              <span className="hidden sm:inline">Back to Properties</span>
+              <span className="sm:hidden">Back</span>
             </Button>
 
             <div className="flex items-center space-x-2">
@@ -222,7 +223,7 @@ const PropertyDetails: React.FC = () => {
                 <Share2 className="w-4 h-4" />
                 <span className="hidden sm:inline">Share</span>
               </Button>
-              
+
               <Button
                 variant="outline"
                 size="sm"
@@ -242,10 +243,10 @@ const PropertyDetails: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="container mx-auto px-4 py-4 sm:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {/* Left Column - Property Details */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
             {/* Image Gallery */}
             <Card className="overflow-hidden">
               <div className="relative">
@@ -325,19 +326,21 @@ const PropertyDetails: React.FC = () => {
 
             {/* Property Information */}
             <Card>
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="text-2xl font-bold text-gray-900 mb-2">
+              <CardHeader className="p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between space-y-4 sm:space-y-0">
+                  <div className="flex-1 min-w-0">
+                    <CardTitle className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
                       {property.title}
                     </CardTitle>
-                    <div className="flex items-center text-gray-600 mb-4">
-                      <MapPin className="w-4 h-4 mr-2" />
-                      <span>{property.location.address}, {property.location.neighborhood}, {property.location.city}</span>
+                    <div className="flex items-start text-gray-600 mb-4">
+                      <MapPin className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
+                      <span className="text-sm sm:text-base">
+                        {property.location.address}, {property.location.neighborhood}, {property.location.city}
+                      </span>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-3xl font-bold text-green-600">
+                  <div className="text-left sm:text-right flex-shrink-0">
+                    <div className="text-2xl sm:text-3xl font-bold text-green-600">
                       ${property.pricing.monthlyRent.toLocaleString()}
                     </div>
                     <div className="text-sm text-gray-600">per month</div>
@@ -345,7 +348,7 @@ const PropertyDetails: React.FC = () => {
                 </div>
 
                 {/* Property Type and Room Type Badges */}
-                <div className="flex items-center space-x-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <Badge variant="secondary">{property.propertyType}</Badge>
                   <Badge variant="outline">{property.roomType}</Badge>
                   {property.details.furnished && (
@@ -354,37 +357,40 @@ const PropertyDetails: React.FC = () => {
                 </div>
               </CardHeader>
 
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-4 sm:space-y-6 p-4 sm:p-6">
                 {/* Key Details */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                   <div className="flex items-center space-x-2">
-                    <Bed className="w-5 h-5 text-gray-600" />
-                    <div>
-                      <div className="font-semibold">{property.details.bedrooms}</div>
-                      <div className="text-sm text-gray-600">Bedrooms</div>
+                    <Bed className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 flex-shrink-0" />
+                    <div className="min-w-0">
+                      <div className="font-semibold text-sm sm:text-base">{property.details.bedrooms}</div>
+                      <div className="text-xs sm:text-sm text-gray-600">Bedrooms</div>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Bath className="w-5 h-5 text-gray-600" />
-                    <div>
-                      <div className="font-semibold">{property.details.bathrooms}</div>
-                      <div className="text-sm text-gray-600">Bathrooms</div>
+                    <Bath className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 flex-shrink-0" />
+                    <div className="min-w-0">
+                      <div className="font-semibold text-sm sm:text-base">{property.details.bathrooms}</div>
+                      <div className="text-xs sm:text-sm text-gray-600">Bathrooms</div>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Square className="w-5 h-5 text-gray-600" />
-                    <div>
-                      <div className="font-semibold">{property.details.squareFootage}</div>
-                      <div className="text-sm text-gray-600">sq ft</div>
+                    <Square className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 flex-shrink-0" />
+                    <div className="min-w-0">
+                      <div className="font-semibold text-sm sm:text-base">{property.details.squareFootage}</div>
+                      <div className="text-xs sm:text-sm text-gray-600">sq ft</div>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Calendar className="w-5 h-5 text-gray-600" />
-                    <div>
-                      <div className="font-semibold">
-                        {new Date(property.availability.availableFrom).toLocaleDateString()}
+                    <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 flex-shrink-0" />
+                    <div className="min-w-0">
+                      <div className="font-semibold text-sm sm:text-base">
+                        {new Date(property.availability.availableFrom).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric'
+                        })}
                       </div>
-                      <div className="text-sm text-gray-600">Available</div>
+                      <div className="text-xs sm:text-sm text-gray-600">Available</div>
                     </div>
                   </div>
                 </div>

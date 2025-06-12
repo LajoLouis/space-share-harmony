@@ -83,8 +83,8 @@ export default function PropertyManagement() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
+        <div className="container mx-auto px-4 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
             <div className="flex items-center space-x-4">
               <Button
                 variant="ghost"
@@ -92,22 +92,25 @@ export default function PropertyManagement() {
                 className="flex items-center space-x-2"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>Back to Dashboard</span>
+                <span className="hidden sm:inline">Back to Dashboard</span>
+                <span className="sm:hidden">Back</span>
               </Button>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Property Management</h1>
-                <p className="text-gray-600">Manage your listings and track performance</p>
+              <div className="min-w-0">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Property Management</h1>
+                <p className="text-sm sm:text-base text-gray-600 hidden sm:block">Manage your listings and track performance</p>
               </div>
             </div>
-            <div className="flex items-center space-x-3">
-              <Button variant="outline" className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <Button variant="outline" className="flex items-center space-x-2 flex-1 sm:flex-none">
                 <Download className="w-4 h-4" />
-                <span>Export Data</span>
+                <span className="hidden sm:inline">Export Data</span>
+                <span className="sm:hidden">Export</span>
               </Button>
-              <Button asChild className="flex items-center space-x-2">
+              <Button asChild className="flex items-center space-x-2 flex-1 sm:flex-none">
                 <Link to="/properties/post">
                   <Plus className="w-4 h-4" />
-                  <span>Add Property</span>
+                  <span className="hidden sm:inline">Add Property</span>
+                  <span className="sm:hidden">Add</span>
                 </Link>
               </Button>
             </div>
@@ -115,20 +118,20 @@ export default function PropertyManagement() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4 sm:py-8">
         {/* Overview Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <Card>
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Total Properties</p>
-                  <p className="text-3xl font-bold text-gray-900">{userProperties.length}</p>
-                  <p className="text-sm text-green-600">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm text-gray-600">Total Properties</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-gray-900">{userProperties.length}</p>
+                  <p className="text-xs sm:text-sm text-green-600">
                     {activeProperties} active • {rentedProperties} rented
                   </p>
                 </div>
-                <Home className="w-8 h-8 text-blue-600" />
+                <Home className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 flex-shrink-0" />
               </div>
             </CardContent>
           </Card>

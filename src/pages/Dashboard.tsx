@@ -121,24 +121,25 @@ const Dashboard = () => {
 
         {/* Profile Completion Card */}
         <Card className="mb-8 border-blue-200 bg-gradient-to-r from-blue-50 to-purple-50">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <User className="w-6 h-6 text-blue-600" />
+          <CardContent className="p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+              <div className="flex items-center space-x-3 sm:space-x-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <User className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                 </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Complete Your Profile</h3>
-                  <p className="text-sm text-gray-600">Get better roommate matches by completing your profile</p>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900">Complete Your Profile</h3>
+                  <p className="text-xs sm:text-sm text-gray-600">Get better roommate matches by completing your profile</p>
                   <div className="flex items-center space-x-2 mt-2">
-                    <Progress value={45} className="w-32 h-2" />
-                    <span className="text-sm text-gray-500">45% complete</span>
+                    <Progress value={45} className="w-24 sm:w-32 h-2" />
+                    <span className="text-xs sm:text-sm text-gray-500">45% complete</span>
                   </div>
                 </div>
               </div>
-              <Button asChild className="bg-blue-600 hover:bg-blue-700">
-                <Link to="/onboarding" className="flex items-center space-x-2">
-                  <span>Continue Setup</span>
+              <Button asChild className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
+                <Link to="/onboarding" className="flex items-center justify-center space-x-2">
+                  <span className="hidden sm:inline">Continue Setup</span>
+                  <span className="sm:hidden">Continue</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </Button>
@@ -228,39 +229,44 @@ const Dashboard = () => {
                         <img
                           src={`https://images.unsplash.com/${match.image}?w=300&h=400&fit=crop&crop=face`}
                           alt={match.name}
-                          className="w-full h-64 md:h-full object-cover"
+                          className="w-full h-48 sm:h-64 md:h-full object-cover"
                         />
                       </div>
-                      <div className="md:w-2/3 p-6">
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="text-xl font-semibold">{match.name}, {match.age}</h3>
-                          <Badge className="bg-green-100 text-green-700">
+                      <div className="md:w-2/3 p-4 sm:p-6">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 space-y-2 sm:space-y-0">
+                          <h3 className="text-lg sm:text-xl font-semibold">{match.name}, {match.age}</h3>
+                          <Badge className="bg-green-100 text-green-700 self-start sm:self-auto">
                             {match.compatibility}% Match
                           </Badge>
                         </div>
-                        
+
                         <div className="flex items-center text-gray-600 mb-3">
-                          <MapPin className="w-4 h-4 mr-1" />
+                          <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
                           <span className="text-sm">{match.location}</span>
                         </div>
-                        
-                        <p className="text-gray-700 mb-4">{match.bio}</p>
-                        
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {match.interests.map((interest, index) => (
-                            <Badge key={index} variant="secondary">
+
+                        <p className="text-gray-700 mb-4 text-sm sm:text-base line-clamp-3">{match.bio}</p>
+
+                        <div className="flex flex-wrap gap-1 sm:gap-2 mb-4">
+                          {match.interests.slice(0, 3).map((interest, index) => (
+                            <Badge key={index} variant="secondary" className="text-xs">
                               {interest}
                             </Badge>
                           ))}
+                          {match.interests.length > 3 && (
+                            <Badge variant="secondary" className="text-xs">
+                              +{match.interests.length - 3} more
+                            </Badge>
+                          )}
                         </div>
-                        
-                        <div className="flex items-center justify-between">
+
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
                           <span className="text-sm text-gray-600">Budget: {match.budget}</span>
                           <div className="flex items-center space-x-2">
-                            <Button variant="outline" size="sm">
+                            <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
                               View Profile
                             </Button>
-                            <Button size="sm" className="bg-gradient-to-r from-purple-600 to-blue-600">
+                            <Button size="sm" className="bg-gradient-to-r from-purple-600 to-blue-600 flex-1 sm:flex-none">
                               <Heart className="w-4 h-4 mr-2" />
                               Like
                             </Button>

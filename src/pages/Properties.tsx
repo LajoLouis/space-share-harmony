@@ -154,39 +154,42 @@ const Properties: React.FC = () => {
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-gray-900">Properties</h1>
-              <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
+            <div className="flex items-center space-x-3 sm:space-x-4">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Properties</h1>
+              <Badge variant="secondary" className="bg-blue-100 text-blue-700 text-xs sm:text-sm">
                 {properties.length} available
               </Badge>
             </div>
-            
+
             <div className="flex items-center space-x-2">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={loadProperties}
                 disabled={isLoading}
+                className="flex-1 sm:flex-none"
               >
                 <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-                Refresh
+                <span className="hidden sm:inline">Refresh</span>
+                <span className="sm:hidden">Refresh</span>
               </Button>
-              <Button asChild className="bg-gradient-to-r from-blue-600 to-purple-600">
+              <Button asChild className="bg-gradient-to-r from-blue-600 to-purple-600 flex-1 sm:flex-none">
                 <Link to="/properties/post">
                   <Plus className="w-4 h-4 mr-2" />
-                  Post Property
+                  <span className="hidden sm:inline">Post Property</span>
+                  <span className="sm:hidden">Post</span>
                 </Link>
               </Button>
             </div>
           </div>
 
           {/* Search Bar */}
-          <div className="mt-4 flex items-center space-x-2">
+          <div className="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
-                placeholder="Search by location, property type, or keywords..."
+                placeholder="Search by location, property type..."
                 value={localSearchQuery}
                 onChange={(e) => setLocalSearchQuery(e.target.value)}
                 onKeyPress={handleKeyPress}
@@ -201,39 +204,43 @@ const Properties: React.FC = () => {
                 </button>
               )}
             </div>
-            
-            <Button onClick={handleSearch} disabled={!localSearchQuery.trim()}>
-              Search
-            </Button>
-            
-            {searchQuery && (
-              <Button variant="outline" onClick={handleClearSearch}>
-                Clear
+
+            <div className="flex space-x-2">
+              <Button onClick={handleSearch} disabled={!localSearchQuery.trim()} className="flex-1 sm:flex-none">
+                Search
               </Button>
-            )}
+
+              {searchQuery && (
+                <Button variant="outline" onClick={handleClearSearch} className="flex-1 sm:flex-none">
+                  Clear
+                </Button>
+              )}
+            </div>
           </div>
 
           {/* Controls */}
-          <div className="mt-4 flex items-center justify-between">
+          <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
             <div className="flex items-center space-x-2">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setShowFilters(!showFilters)}
-                className={showFilters ? 'bg-blue-100' : ''}
+                className={`${showFilters ? 'bg-blue-100' : ''} flex-1 sm:flex-none`}
               >
                 <Filter className="w-4 h-4 mr-2" />
-                Filters
+                <span className="hidden sm:inline">Filters</span>
+                <span className="sm:hidden">Filter</span>
               </Button>
-              
+
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setShowSearch(!showSearch)}
-                className={showSearch ? 'bg-blue-100' : ''}
+                className={`${showSearch ? 'bg-blue-100' : ''} flex-1 sm:flex-none`}
               >
                 <Search className="w-4 h-4 mr-2" />
-                Advanced Search
+                <span className="hidden sm:inline">Advanced Search</span>
+                <span className="sm:hidden">Search</span>
               </Button>
             </div>
 
@@ -241,7 +248,7 @@ const Properties: React.FC = () => {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="text-sm border border-gray-300 rounded-md px-3 py-1"
+                className="text-xs sm:text-sm border border-gray-300 rounded-md px-2 sm:px-3 py-1 flex-1 sm:flex-none"
               >
                 {SORT_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -249,12 +256,12 @@ const Properties: React.FC = () => {
                   </option>
                 ))}
               </select>
-              
+
               <Button variant="outline" size="sm" onClick={toggleSort}>
                 {sortOrder === 'asc' ? <SortAsc className="w-4 h-4" /> : <SortDesc className="w-4 h-4" />}
               </Button>
-              
-              <div className="flex border border-gray-300 rounded-md">
+
+              <div className="hidden sm:flex border border-gray-300 rounded-md">
                 <Button
                   variant={viewMode === 'grid' ? 'default' : 'ghost'}
                   size="sm"
@@ -351,7 +358,7 @@ const Properties: React.FC = () => {
         ) : (
           <>
             {viewMode === 'grid' ? (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 {properties.map((property) => (
                   <PropertyCard
                     key={property.id}
@@ -361,7 +368,7 @@ const Properties: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {properties.map((property) => (
                   <PropertyCard
                     key={property.id}

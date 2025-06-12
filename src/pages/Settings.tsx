@@ -135,8 +135,8 @@ export default function Settings() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
+        <div className="container mx-auto px-4 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
             <div className="flex items-center space-x-4">
               <Button
                 variant="ghost"
@@ -144,14 +144,15 @@ export default function Settings() {
                 className="flex items-center space-x-2"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>Back to Dashboard</span>
+                <span className="hidden sm:inline">Back to Dashboard</span>
+                <span className="sm:hidden">Back</span>
               </Button>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-                <p className="text-gray-600">Manage your account preferences</p>
+              <div className="min-w-0">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Settings</h1>
+                <p className="text-sm sm:text-base text-gray-600 hidden sm:block">Manage your account preferences</p>
               </div>
             </div>
-            <Button onClick={handleSaveSettings} disabled={isLoading}>
+            <Button onClick={handleSaveSettings} disabled={isLoading} className="w-full sm:w-auto">
               <Save className="w-4 h-4 mr-2" />
               {isLoading ? 'Saving...' : 'Save Changes'}
             </Button>
@@ -159,14 +160,20 @@ export default function Settings() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="notifications" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="notifications">Notifications</TabsTrigger>
-            <TabsTrigger value="privacy">Privacy</TabsTrigger>
-            <TabsTrigger value="discovery">Discovery</TabsTrigger>
-            <TabsTrigger value="account">Account</TabsTrigger>
-            <TabsTrigger value="appearance">Appearance</TabsTrigger>
+      <div className="container mx-auto px-4 py-4 sm:py-8">
+        <Tabs defaultValue="notifications" className="space-y-4 sm:space-y-6">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 h-auto">
+            <TabsTrigger value="notifications" className="text-xs sm:text-sm">
+              <span className="hidden sm:inline">Notifications</span>
+              <span className="sm:hidden">Notify</span>
+            </TabsTrigger>
+            <TabsTrigger value="privacy" className="text-xs sm:text-sm">Privacy</TabsTrigger>
+            <TabsTrigger value="discovery" className="text-xs sm:text-sm">Discovery</TabsTrigger>
+            <TabsTrigger value="account" className="text-xs sm:text-sm">Account</TabsTrigger>
+            <TabsTrigger value="appearance" className="text-xs sm:text-sm col-span-2 sm:col-span-1">
+              <span className="hidden sm:inline">Appearance</span>
+              <span className="sm:hidden">Theme</span>
+            </TabsTrigger>
           </TabsList>
 
           {/* Notifications Settings */}
