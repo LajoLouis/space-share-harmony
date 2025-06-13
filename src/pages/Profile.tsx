@@ -141,6 +141,23 @@ export default function Profile() {
     setShowOnboarding(false);
   };
 
+  // Handler functions for Quick Actions
+  const handleUpdatePhotos = () => {
+    toast.info('Photo upload feature coming soon!');
+  };
+
+  const handleViewMessages = () => {
+    navigate('/messages');
+  };
+
+  const handleManageFavorites = () => {
+    toast.info('Favorites management feature coming soon!');
+  };
+
+  const handleDiscoverySettings = () => {
+    toast.info('Discovery settings feature coming soon!');
+  };
+
   const getProfileCompletion = () => {
     if (!profile) return { score: 0, missingFields: [] };
 
@@ -539,7 +556,7 @@ export default function Profile() {
                   )}
                 </div>
 
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full" onClick={handleUpdatePhotos}>
                   <Camera className="w-4 h-4 mr-2" />
                   Update Photos
                 </Button>
@@ -561,19 +578,19 @@ export default function Profile() {
                     Complete Profile ({completion.score}%)
                   </Button>
                 )}
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" className="w-full justify-start" onClick={handleViewMessages}>
                   <MessageCircle className="w-4 h-4 mr-2" />
                   View Messages
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" className="w-full justify-start" onClick={handleManageFavorites}>
                   <Heart className="w-4 h-4 mr-2" />
                   Manage Favorites
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" className="w-full justify-start" onClick={handleDiscoverySettings}>
                   <Star className="w-4 h-4 mr-2" />
                   Discovery Settings
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" className="w-full justify-start" onClick={handleUpdatePhotos}>
                   <Camera className="w-4 h-4 mr-2" />
                   Update Photos
                 </Button>
