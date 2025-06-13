@@ -2,15 +2,16 @@ import React from 'react';
 import { format } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Check, 
-  CheckCheck, 
-  Clock, 
+import {
+  Check,
+  CheckCheck,
+  Clock,
   Image as ImageIcon,
   File,
   Home
 } from 'lucide-react';
 import { Message, User, MessageType } from '@/types/message.types';
+import { FileAttachment, AudioAttachment } from '@/components/messages/FileAttachment';
 
 interface MessageBubbleProps {
   message: Message;
@@ -62,11 +63,23 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
       case MessageType.FILE:
         return (
           <div className="space-y-2">
-            <div className="bg-gray-100 rounded-lg p-4 flex items-center space-x-2">
-              <File className="w-5 h-5 text-gray-600" />
-              <span className="text-sm text-gray-600">File attachment</span>
-            </div>
-            {message.content && (
+            {message.attachments && message.attachments.length > 0 ? (
+              <div className="space-y-2">
+                {message.attachments.map((attachment) => (
+                  <FileAttachment
+                    key={attachment.id}
+                    attachment={attachment}
+                    isOwnMessage={isCurrentUser}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="bg-gray-100 rounded-lg p-4 flex items-center space-x-2">
+                <File className="w-5 h-5 text-gray-600" />
+                <span className="text-sm text-gray-600">File attachment</span>
+              </div>
+            )}
+            {message.content && message.content !== message.attachments?.[0]?.name && (
               <div className="text-sm">{message.content}</div>
             )}
           </div>

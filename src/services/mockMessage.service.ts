@@ -359,6 +359,14 @@ class MockMessageService {
       timestamp,
       isRead: false,
       isDelivered: true,
+      attachments: request.attachments?.map(attachment => ({
+        id: `att-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        type: attachment.type,
+        url: attachment.url,
+        name: attachment.name,
+        size: attachment.size,
+        mimeType: attachment.mimeType
+      })),
       isEdited: false
     };
 

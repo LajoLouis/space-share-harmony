@@ -134,7 +134,7 @@ export interface SendMessageRequest {
   receiverId?: string;
   content: string;
   type: MessageType;
-  attachments?: File[];
+  attachments?: MessageAttachment[];
   propertyId?: string;
   replyTo?: string;
 }
