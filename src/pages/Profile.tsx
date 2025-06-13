@@ -37,6 +37,8 @@ import { toast } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { OnboardingWizard } from '@/components/onboarding/OnboardingWizard';
 import { Progress } from '@/components/ui/progress';
+import { LifestyleEditor } from '@/components/profile/LifestyleEditor';
+import { RoommatePreferencesEditor } from '@/components/profile/RoommatePreferencesEditor';
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -471,23 +473,11 @@ export default function Profile() {
               </TabsContent>
 
               <TabsContent value="lifestyle">
-                <Card>
-                  <CardContent className="p-12 text-center">
-                    <Star className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Lifestyle Preferences</h3>
-                    <p className="text-gray-600">Lifestyle editing coming soon...</p>
-                  </CardContent>
-                </Card>
+                <LifestyleEditor />
               </TabsContent>
 
               <TabsContent value="preferences">
-                <Card>
-                  <CardContent className="p-12 text-center">
-                    <Heart className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Roommate Preferences</h3>
-                    <p className="text-gray-600">Preference editing coming soon...</p>
-                  </CardContent>
-                </Card>
+                <RoommatePreferencesEditor />
               </TabsContent>
             </Tabs>
           </div>
