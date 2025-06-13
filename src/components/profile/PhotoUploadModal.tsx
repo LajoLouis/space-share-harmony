@@ -179,10 +179,10 @@ export const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[95vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
-          <DialogTitle className="flex items-center space-x-2">
-            <Camera className="w-5 h-5 text-purple-600" />
+          <DialogTitle className="flex items-center space-x-2 text-lg sm:text-xl">
+            <Camera className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
             <span>Upload Profile Photos</span>
           </DialogTitle>
         </DialogHeader>
@@ -209,7 +209,7 @@ export const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
 
           {/* Photo Previews */}
           {photos.length > 0 && (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {photos.map((photo) => (
                 <Card key={photo.id} className="relative overflow-hidden">
                   <CardContent className="p-0">
@@ -219,36 +219,37 @@ export const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
                         alt="Preview"
                         className="w-full h-full object-cover"
                       />
-                      
+
                       {/* Primary Badge */}
                       {photo.isPrimary && (
-                        <Badge className="absolute top-2 left-2 bg-yellow-500 hover:bg-yellow-600">
-                          <Star className="w-3 h-3 mr-1" />
-                          Primary
+                        <Badge className="absolute top-1 sm:top-2 left-1 sm:left-2 bg-yellow-500 hover:bg-yellow-600 text-xs">
+                          <Star className="w-2 h-2 sm:w-3 sm:h-3 mr-1" />
+                          <span className="hidden sm:inline">Primary</span>
+                          <span className="sm:hidden">1st</span>
                         </Badge>
                       )}
-                      
+
                       {/* Action Buttons */}
-                      <div className="absolute top-2 right-2 flex space-x-1">
+                      <div className="absolute top-1 sm:top-2 right-1 sm:right-2 flex space-x-1">
                         {!photo.isPrimary && (
                           <Button
                             size="sm"
                             variant="secondary"
                             onClick={() => setPrimaryPhoto(photo.id)}
-                            className="h-6 w-6 p-0"
+                            className="h-5 w-5 sm:h-6 sm:w-6 p-0"
                             disabled={isUploading}
                           >
-                            <Star className="w-3 h-3" />
+                            <Star className="w-2 h-2 sm:w-3 sm:h-3" />
                           </Button>
                         )}
                         <Button
                           size="sm"
                           variant="destructive"
                           onClick={() => removePhoto(photo.id)}
-                          className="h-6 w-6 p-0"
+                          className="h-5 w-5 sm:h-6 sm:w-6 p-0"
                           disabled={isUploading}
                         >
-                          <X className="w-3 h-3" />
+                          <X className="w-2 h-2 sm:w-3 sm:h-3" />
                         </Button>
                       </div>
                     </div>
@@ -262,26 +263,28 @@ export const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
           {photos.length < maxPhotos && !isUploading && (
             <div
               {...getRootProps()}
-              className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
+              className={`border-2 border-dashed rounded-lg p-4 sm:p-6 lg:p-8 text-center cursor-pointer transition-colors ${
                 isDragActive
                   ? 'border-purple-400 bg-purple-50'
                   : 'border-gray-300 hover:border-purple-400 hover:bg-purple-50'
               }`}
             >
               <input {...getInputProps()} />
-              <div className="flex flex-col items-center space-y-4">
-                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center">
-                  <Upload className="w-8 h-8 text-purple-600" />
+              <div className="flex flex-col items-center space-y-3 sm:space-y-4">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-purple-100 rounded-full flex items-center justify-center">
+                  <Upload className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600" />
                 </div>
                 <div>
-                  <p className="text-lg font-medium text-gray-900">
+                  <p className="text-base sm:text-lg font-medium text-gray-900">
                     {isDragActive ? 'Drop photos here' : 'Upload photos'}
                   </p>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Drag and drop or click to select files
+                  <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                    <span className="hidden sm:inline">Drag and drop or click to select files</span>
+                    <span className="sm:hidden">Tap to select files</span>
                   </p>
                   <p className="text-xs text-gray-400 mt-2">
-                    JPG, PNG, WebP up to 5MB each • {photos.length}/{maxPhotos} photos
+                    <span className="hidden sm:inline">JPG, PNG, WebP up to 5MB each • {photos.length}/{maxPhotos} photos</span>
+                    <span className="sm:hidden">{photos.length}/{maxPhotos} photos • 5MB max</span>
                   </p>
                 </div>
               </div>
@@ -289,40 +292,49 @@ export const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
           )}
 
           {/* Instructions */}
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <div className="flex items-start space-x-3">
-              <ImageIcon className="w-5 h-5 text-blue-600 mt-0.5" />
-              <div className="text-sm">
+          <div className="bg-blue-50 p-3 sm:p-4 rounded-lg">
+            <div className="flex items-start space-x-2 sm:space-x-3">
+              <ImageIcon className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+              <div className="text-xs sm:text-sm">
                 <p className="font-medium text-blue-900 mb-1">Photo Tips:</p>
                 <ul className="text-blue-700 space-y-1">
                   <li>• Upload at least 1 photo (up to {maxPhotos} total)</li>
-                  <li>• First photo will be your primary profile photo</li>
-                  <li>• Click the star to set a different primary photo</li>
-                  <li>• Use clear, well-lit photos that show your face</li>
+                  <li className="hidden sm:list-item">• First photo will be your primary profile photo</li>
+                  <li>• <span className="hidden sm:inline">Click the star to set a different primary photo</span><span className="sm:hidden">Tap star for primary photo</span></li>
+                  <li className="hidden sm:list-item">• Use clear, well-lit photos that show your face</li>
                 </ul>
               </div>
             </div>
           </div>
         </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={handleClose} disabled={isUploading}>
+        <DialogFooter className="flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+          <Button
+            variant="outline"
+            onClick={handleClose}
+            disabled={isUploading}
+            className="w-full sm:w-auto order-2 sm:order-1"
+            size="sm"
+          >
             Cancel
           </Button>
-          <Button 
-            onClick={handleUpload} 
+          <Button
+            onClick={handleUpload}
             disabled={photos.length === 0 || isUploading}
-            className="bg-purple-600 hover:bg-purple-700"
+            className="bg-purple-600 hover:bg-purple-700 w-full sm:w-auto order-1 sm:order-2"
+            size="sm"
           >
             {isUploading ? (
               <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Uploading...
+                <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 mr-2 animate-spin" />
+                <span className="hidden sm:inline">Uploading...</span>
+                <span className="sm:hidden">Uploading...</span>
               </>
             ) : (
               <>
-                <Upload className="w-4 h-4 mr-2" />
-                Upload {photos.length} Photo{photos.length !== 1 ? 's' : ''}
+                <Upload className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
+                <span className="hidden sm:inline">Upload {photos.length} Photo{photos.length !== 1 ? 's' : ''}</span>
+                <span className="sm:hidden">Upload ({photos.length})</span>
               </>
             )}
           </Button>
