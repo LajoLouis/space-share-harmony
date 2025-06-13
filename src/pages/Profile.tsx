@@ -39,6 +39,7 @@ import { OnboardingWizard } from '@/components/onboarding/OnboardingWizard';
 import { Progress } from '@/components/ui/progress';
 import { LifestyleEditor } from '@/components/profile/LifestyleEditor';
 import { RoommatePreferencesEditor } from '@/components/profile/RoommatePreferencesEditor';
+import { PhotoUploadModal } from '@/components/profile/PhotoUploadModal';
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -48,6 +49,7 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   const [formData, setFormData] = useState({
     bio: '',
     occupation: '',
@@ -143,7 +145,12 @@ export default function Profile() {
 
   // Handler functions for Quick Actions
   const handleUpdatePhotos = () => {
-    toast.info('Photo upload feature coming soon!');
+    setShowPhotoUpload(true);
+  };
+
+  const handlePhotosUploaded = () => {
+    // Reload profile to get updated photos
+    loadProfile();
   };
 
   const handleViewMessages = () => {
@@ -509,7 +516,9 @@ export default function Profile() {
               <CardContent className="space-y-4">
                 <div className="flex items-center space-x-4">
                   <Avatar className="w-16 h-16">
-                    <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${fullName}`} />
+                    <AvatarImage
+                      src={profile?.photos?.find(p => p.isPrimary)?.url || `https://api.dicebear.com/7.x/initials/svg?seed=${fullName}`}
+                    />
                     <AvatarFallback>{initials}</AvatarFallback>
                   </Avatar>
                   <div>
@@ -556,9 +565,37 @@ export default function Profile() {
                   )}
                 </div>
 
+                {/* Photo Gallery */}
+                {profile?.photos && profile.photos.length > 0 && (
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-gray-900">Photos ({profile.photos.length})</h4>
+                    <div className="grid grid-cols-3 gap-2">
+                      {profile.photos.slice(0, 6).map((photo, index) => (
+                        <div key={photo.id} className="relative aspect-square">
+                          <img
+                            src={photo.thumbnailUrl || photo.url}
+                            alt={`Profile photo ${index + 1}`}
+                            className="w-full h-full object-cover rounded-md"
+                          />
+                          {photo.isPrimary && (
+                            <Badge className="absolute top-1 left-1 bg-yellow-500 hover:bg-yellow-600 text-xs px-1 py-0">
+                              <Star className="w-2 h-2" />
+                            </Badge>
+                          )}
+                        </div>
+                      ))}
+                      {profile.photos.length > 6 && (
+                        <div className="aspect-square bg-gray-100 rounded-md flex items-center justify-center">
+                          <span className="text-xs text-gray-500">+{profile.photos.length - 6}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 <Button variant="outline" className="w-full" onClick={handleUpdatePhotos}>
                   <Camera className="w-4 h-4 mr-2" />
-                  Update Photos
+                  {profile?.photos && profile.photos.length > 0 ? 'Update Photos' : 'Add Photos'}
                 </Button>
               </CardContent>
             </Card>
@@ -599,6 +636,13 @@ export default function Profile() {
           </div>
         </div>
       </div>
+
+      {/* Photo Upload Modal */}
+      <PhotoUploadModal
+        isOpen={showPhotoUpload}
+        onClose={() => setShowPhotoUpload(false)}
+        onPhotosUploaded={handlePhotosUploaded}
+      />
     </div>
   );
 }
