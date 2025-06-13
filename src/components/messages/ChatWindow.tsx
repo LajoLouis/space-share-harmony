@@ -21,7 +21,9 @@ import { useActiveConversation } from '@/stores/messageStore';
 import { MessageType } from '@/types/message.types';
 import { MessageBubble } from '@/components/messages/MessageBubble';
 import { TypingIndicator } from '@/components/messages/TypingIndicator';
+import { FileUploadModal } from '@/components/messages/FileUploadModal';
 import { Skeleton } from '@/components/ui/skeleton';
+import { FileUploadResult } from '@/utils/fileUpload';
 
 interface ChatWindowProps {
   conversationId: string;
@@ -36,6 +38,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 }) => {
   const [messageText, setMessageText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [showFileUpload, setShowFileUpload] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout>();
@@ -122,6 +125,29 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage(e);
+    }
+  };
+
+  const handleFilesUploaded = async (files: FileUploadResult[]) => {
+    try {
+      // Send each file as a separate message
+      for (const file of files) {
+        await sendMessage({
+          conversationId,
+          content: file.name,
+          type: MessageType.FILE,
+          attachments: [{
+            id: file.id,
+            type: file.type,
+            url: file.url,
+            name: file.name,
+            size: file.size,
+            mimeType: file.mimeType
+          }]
+        });
+      }
+    } catch (error) {
+      console.error('Failed to send file messages:', error);
     }
   };
 
@@ -311,7 +337,13 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
       <div className="border-t border-gray-200 p-4 bg-white">
         <form onSubmit={handleSendMessage} className="flex items-end space-x-2">
           {/* Attachment Button */}
-          <Button type="button" variant="ghost" size="sm" className="mb-1">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="mb-1"
+            onClick={() => setShowFileUpload(true)}
+          >
             <Paperclip className="w-4 h-4" />
           </Button>
           
@@ -343,6 +375,13 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
           </Button>
         </form>
       </div>
+
+      {/* File Upload Modal */}
+      <FileUploadModal
+        isOpen={showFileUpload}
+        onClose={() => setShowFileUpload(false)}
+        onFilesUploaded={handleFilesUploaded}
+      />
     </div>
   );
 };
