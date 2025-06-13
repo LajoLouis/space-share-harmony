@@ -59,7 +59,11 @@ const preferencesSchema = z.object({
   niceToHaves: z.array(z.string()),
 });
 
-export const RoommatePreferencesEditor: React.FC = () => {
+interface RoommatePreferencesEditorProps {
+  isEditing?: boolean;
+}
+
+export const RoommatePreferencesEditor: React.FC<RoommatePreferencesEditorProps> = ({ isEditing = false }) => {
   const { profile } = useProfile();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedHousingTypes, setSelectedHousingTypes] = useState<string[]>(
@@ -199,49 +203,71 @@ export const RoommatePreferencesEditor: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Age Range</Label>
-              <div className="space-y-2">
-                <div className="flex items-center space-x-4">
-                  <span className="text-sm text-gray-600">
-                    {watchedData.ageRange?.min} - {watchedData.ageRange?.max} years
-                  </span>
+              {isEditing ? (
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-4">
+                    <span className="text-sm text-gray-600">
+                      {watchedData.ageRange?.min} - {watchedData.ageRange?.max} years
+                    </span>
+                  </div>
+                  <Slider
+                    value={[watchedData.ageRange?.min || 22, watchedData.ageRange?.max || 35]}
+                    onValueChange={([min, max]) => {
+                      setValue('ageRange', { min, max });
+                      trigger('ageRange');
+                    }}
+                    min={18}
+                    max={65}
+                    step={1}
+                    className="w-full"
+                  />
                 </div>
-                <Slider
-                  value={[watchedData.ageRange?.min || 22, watchedData.ageRange?.max || 35]}
-                  onValueChange={([min, max]) => {
-                    setValue('ageRange', { min, max });
-                    trigger('ageRange');
-                  }}
-                  min={18}
-                  max={65}
-                  step={1}
-                  className="w-full"
-                />
-              </div>
-              {errors.ageRange && (
+              ) : (
+                <p className="text-gray-700 mt-1 p-2 bg-gray-50 rounded-md">
+                  {watchedData.ageRange?.min && watchedData.ageRange?.max
+                    ? `${watchedData.ageRange.min} - ${watchedData.ageRange.max} years`
+                    : 'Not specified'
+                  }
+                </p>
+              )}
+              {isEditing && errors.ageRange && (
                 <p className="text-sm text-red-600">{errors.ageRange.message}</p>
               )}
             </div>
 
             <div className="space-y-2">
               <Label>Gender Preference</Label>
-              <Select
-                value={watchedData.genderPreference}
-                onValueChange={(value) => {
-                  setValue('genderPreference', value);
-                  trigger('genderPreference');
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select gender preference" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="any">Any Gender</SelectItem>
-                  <SelectItem value="male">Male</SelectItem>
-                  <SelectItem value="female">Female</SelectItem>
-                  <SelectItem value="non-binary">Non-Binary</SelectItem>
-                </SelectContent>
-              </Select>
-              {errors.genderPreference && (
+              {isEditing ? (
+                <Select
+                  value={watchedData.genderPreference}
+                  onValueChange={(value) => {
+                    setValue('genderPreference', value);
+                    trigger('genderPreference');
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select gender preference" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any Gender</SelectItem>
+                    <SelectItem value="male">Male</SelectItem>
+                    <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="non-binary">Non-Binary</SelectItem>
+                  </SelectContent>
+                </Select>
+              ) : (
+                <p className="text-gray-700 mt-1 p-2 bg-gray-50 rounded-md">
+                  {watchedData.genderPreference ?
+                    watchedData.genderPreference === 'any' ? 'Any Gender' :
+                    watchedData.genderPreference === 'male' ? 'Male' :
+                    watchedData.genderPreference === 'female' ? 'Female' :
+                    watchedData.genderPreference === 'non-binary' ? 'Non-Binary' :
+                    watchedData.genderPreference
+                    : 'Not specified'
+                  }
+                </p>
+              )}
+              {isEditing && errors.genderPreference && (
                 <p className="text-sm text-red-600">{errors.genderPreference.message}</p>
               )}
             </div>
@@ -260,102 +286,135 @@ export const RoommatePreferencesEditor: React.FC = () => {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label>Housing Types</Label>
-            <div className="flex flex-wrap gap-2">
-              {housingTypes.map((type) => (
-                <Button
-                  key={type}
-                  type="button"
-                  variant={selectedHousingTypes.includes(type) ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => toggleHousingType(type)}
-                  className={selectedHousingTypes.includes(type) ? 'bg-purple-600' : ''}
-                >
-                  {type}
-                </Button>
-              ))}
-            </div>
-            {errors.housingType && (
+            {isEditing ? (
+              <div className="flex flex-wrap gap-2">
+                {housingTypes.map((type) => (
+                  <Button
+                    key={type}
+                    type="button"
+                    variant={selectedHousingTypes.includes(type) ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => toggleHousingType(type)}
+                    className={selectedHousingTypes.includes(type) ? 'bg-purple-600' : ''}
+                  >
+                    {type}
+                  </Button>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {selectedHousingTypes.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {selectedHousingTypes.map((type) => (
+                      <Badge key={type} variant="secondary" className="bg-purple-100 text-purple-800">
+                        {type}
+                      </Badge>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500 italic">No housing types selected</p>
+                )}
+              </div>
+            )}
+            {isEditing && errors.housingType && (
               <p className="text-sm text-red-600">{errors.housingType.message}</p>
             )}
           </div>
 
           <div className="space-y-2">
             <Label>Budget Range (Monthly)</Label>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <Label className="text-sm">Minimum</Label>
-                <Input
-                  type="number"
-                  value={watchedData.budgetRange?.min || ''}
-                  onChange={(e) => {
-                    const value = parseInt(e.target.value) || 0;
-                    setValue('budgetRange', { ...watchedData.budgetRange!, min: value });
-                    trigger('budgetRange');
-                  }}
-                  placeholder="800"
-                />
+            {isEditing ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label className="text-sm">Minimum</Label>
+                  <Input
+                    type="number"
+                    value={watchedData.budgetRange?.min || ''}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value) || 0;
+                      setValue('budgetRange', { ...watchedData.budgetRange!, min: value });
+                      trigger('budgetRange');
+                    }}
+                    placeholder="800"
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm">Maximum</Label>
+                  <Input
+                    type="number"
+                    value={watchedData.budgetRange?.max || ''}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value) || 0;
+                      setValue('budgetRange', { ...watchedData.budgetRange!, max: value });
+                      trigger('budgetRange');
+                    }}
+                    placeholder="2000"
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm">Currency</Label>
+                  <Select
+                    value={watchedData.budgetRange?.currency}
+                    onValueChange={(value) => {
+                      setValue('budgetRange', { ...watchedData.budgetRange!, currency: value });
+                      trigger('budgetRange');
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="USD">USD ($)</SelectItem>
+                      <SelectItem value="EUR">EUR (€)</SelectItem>
+                      <SelectItem value="GBP">GBP (£)</SelectItem>
+                      <SelectItem value="CAD">CAD (C$)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              <div>
-                <Label className="text-sm">Maximum</Label>
-                <Input
-                  type="number"
-                  value={watchedData.budgetRange?.max || ''}
-                  onChange={(e) => {
-                    const value = parseInt(e.target.value) || 0;
-                    setValue('budgetRange', { ...watchedData.budgetRange!, max: value });
-                    trigger('budgetRange');
-                  }}
-                  placeholder="2000"
-                />
-              </div>
-              <div>
-                <Label className="text-sm">Currency</Label>
-                <Select
-                  value={watchedData.budgetRange?.currency}
-                  onValueChange={(value) => {
-                    setValue('budgetRange', { ...watchedData.budgetRange!, currency: value });
-                    trigger('budgetRange');
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="USD">USD ($)</SelectItem>
-                    <SelectItem value="EUR">EUR (€)</SelectItem>
-                    <SelectItem value="GBP">GBP (£)</SelectItem>
-                    <SelectItem value="CAD">CAD (C$)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            {errors.budgetRange && (
+            ) : (
+              <p className="text-gray-700 mt-1 p-2 bg-gray-50 rounded-md">
+                {watchedData.budgetRange?.min && watchedData.budgetRange?.max && watchedData.budgetRange?.currency ?
+                  `${watchedData.budgetRange.currency === 'USD' ? '$' :
+                     watchedData.budgetRange.currency === 'EUR' ? '€' :
+                     watchedData.budgetRange.currency === 'GBP' ? '£' :
+                     watchedData.budgetRange.currency === 'CAD' ? 'C$' : ''}${watchedData.budgetRange.min} - ${watchedData.budgetRange.currency === 'USD' ? '$' :
+                     watchedData.budgetRange.currency === 'EUR' ? '€' :
+                     watchedData.budgetRange.currency === 'GBP' ? '£' :
+                     watchedData.budgetRange.currency === 'CAD' ? 'C$' : ''}${watchedData.budgetRange.max} per month`
+                  : 'Not specified'
+                }
+              </p>
+            )}
+            {isEditing && errors.budgetRange && (
               <p className="text-sm text-red-600">{errors.budgetRange.message}</p>
             )}
           </div>
         </CardContent>
       </Card>
 
-      {/* Save Button */}
-      <div className="flex justify-end">
-        <Button 
-          type="submit" 
-          disabled={!isDirty || isLoading}
-          className="min-w-[120px]"
-        >
-          {isLoading ? (
-            <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Saving...
-            </>
-          ) : (
-            <>
-              <Save className="w-4 h-4 mr-2" />
-              Save Changes
-            </>
-          )}
-        </Button>
-      </div>
+      {/* Save Button - Only show when editing */}
+      {isEditing && (
+        <div className="flex justify-end">
+          <Button
+            type="submit"
+            disabled={!isDirty || isLoading}
+            className="min-w-[120px]"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4 mr-2" />
+                Save Changes
+              </>
+            )}
+          </Button>
+        </div>
+      )}
     </form>
   );
 };

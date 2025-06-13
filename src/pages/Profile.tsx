@@ -473,11 +473,11 @@ export default function Profile() {
               </TabsContent>
 
               <TabsContent value="lifestyle">
-                <LifestyleEditor />
+                <LifestyleEditor isEditing={isEditing} />
               </TabsContent>
 
               <TabsContent value="preferences">
-                <RoommatePreferencesEditor />
+                <RoommatePreferencesEditor isEditing={isEditing} />
               </TabsContent>
             </Tabs>
           </div>

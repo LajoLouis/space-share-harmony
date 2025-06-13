@@ -46,7 +46,11 @@ const lifestyleSchema = z.object({
   languages: z.array(z.string()).min(1, 'Please select at least one language'),
 });
 
-export const LifestyleEditor: React.FC = () => {
+interface LifestyleEditorProps {
+  isEditing?: boolean;
+}
+
+export const LifestyleEditor: React.FC<LifestyleEditorProps> = ({ isEditing = false }) => {
   const { profile } = useProfile();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedInterests, setSelectedInterests] = useState<string[]>(
@@ -228,103 +232,139 @@ export const LifestyleEditor: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Sleep Schedule *</Label>
-              <Select
-                value={watchedData.sleepSchedule}
-                onValueChange={(value) => {
-                  setValue('sleepSchedule', value);
-                  trigger('sleepSchedule');
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select your sleep schedule" />
-                </SelectTrigger>
-                <SelectContent>
-                  {lifestyleOptions.sleepSchedule.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      <div className="flex items-center space-x-2">
-                        {option.icon && <option.icon className="w-4 h-4" />}
-                        <span>{option.label}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.sleepSchedule && (
+              {isEditing ? (
+                <Select
+                  value={watchedData.sleepSchedule}
+                  onValueChange={(value) => {
+                    setValue('sleepSchedule', value);
+                    trigger('sleepSchedule');
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your sleep schedule" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {lifestyleOptions.sleepSchedule.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        <div className="flex items-center space-x-2">
+                          {option.icon && <option.icon className="w-4 h-4" />}
+                          <span>{option.label}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <p className="text-gray-700 mt-1 p-2 bg-gray-50 rounded-md">
+                  {watchedData.sleepSchedule ?
+                    lifestyleOptions.sleepSchedule.find(opt => opt.value === watchedData.sleepSchedule)?.label || watchedData.sleepSchedule
+                    : 'Not specified'
+                  }
+                </p>
+              )}
+              {isEditing && errors.sleepSchedule && (
                 <p className="text-sm text-red-600">{errors.sleepSchedule.message}</p>
               )}
             </div>
 
             <div className="space-y-2">
               <Label>Cleanliness Level *</Label>
-              <Select
-                value={watchedData.cleanliness}
-                onValueChange={(value) => {
-                  setValue('cleanliness', value);
-                  trigger('cleanliness');
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select cleanliness level" />
-                </SelectTrigger>
-                <SelectContent>
-                  {lifestyleOptions.cleanliness.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.cleanliness && (
+              {isEditing ? (
+                <Select
+                  value={watchedData.cleanliness}
+                  onValueChange={(value) => {
+                    setValue('cleanliness', value);
+                    trigger('cleanliness');
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select cleanliness level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {lifestyleOptions.cleanliness.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <p className="text-gray-700 mt-1 p-2 bg-gray-50 rounded-md">
+                  {watchedData.cleanliness ?
+                    lifestyleOptions.cleanliness.find(opt => opt.value === watchedData.cleanliness)?.label || watchedData.cleanliness
+                    : 'Not specified'
+                  }
+                </p>
+              )}
+              {isEditing && errors.cleanliness && (
                 <p className="text-sm text-red-600">{errors.cleanliness.message}</p>
               )}
             </div>
 
             <div className="space-y-2">
               <Label>Social Level *</Label>
-              <Select
-                value={watchedData.socialLevel}
-                onValueChange={(value) => {
-                  setValue('socialLevel', value);
-                  trigger('socialLevel');
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select social level" />
-                </SelectTrigger>
-                <SelectContent>
-                  {lifestyleOptions.socialLevel.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.socialLevel && (
+              {isEditing ? (
+                <Select
+                  value={watchedData.socialLevel}
+                  onValueChange={(value) => {
+                    setValue('socialLevel', value);
+                    trigger('socialLevel');
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select social level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {lifestyleOptions.socialLevel.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <p className="text-gray-700 mt-1 p-2 bg-gray-50 rounded-md">
+                  {watchedData.socialLevel ?
+                    lifestyleOptions.socialLevel.find(opt => opt.value === watchedData.socialLevel)?.label || watchedData.socialLevel
+                    : 'Not specified'
+                  }
+                </p>
+              )}
+              {isEditing && errors.socialLevel && (
                 <p className="text-sm text-red-600">{errors.socialLevel.message}</p>
               )}
             </div>
 
             <div className="space-y-2">
               <Label>Guests Policy *</Label>
-              <Select
-                value={watchedData.guestsPolicy}
-                onValueChange={(value) => {
-                  setValue('guestsPolicy', value);
-                  trigger('guestsPolicy');
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select guests policy" />
-                </SelectTrigger>
-                <SelectContent>
-                  {lifestyleOptions.guestsPolicy.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.guestsPolicy && (
+              {isEditing ? (
+                <Select
+                  value={watchedData.guestsPolicy}
+                  onValueChange={(value) => {
+                    setValue('guestsPolicy', value);
+                    trigger('guestsPolicy');
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select guests policy" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {lifestyleOptions.guestsPolicy.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <p className="text-gray-700 mt-1 p-2 bg-gray-50 rounded-md">
+                  {watchedData.guestsPolicy ?
+                    lifestyleOptions.guestsPolicy.find(opt => opt.value === watchedData.guestsPolicy)?.label || watchedData.guestsPolicy
+                    : 'Not specified'
+                  }
+                </p>
+              )}
+              {isEditing && errors.guestsPolicy && (
                 <p className="text-sm text-red-600">{errors.guestsPolicy.message}</p>
               )}
             </div>
@@ -344,75 +384,102 @@ export const LifestyleEditor: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label>Smoking *</Label>
-              <Select
-                value={watchedData.smoking}
-                onValueChange={(value) => {
-                  setValue('smoking', value);
-                  trigger('smoking');
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Smoking preference" />
-                </SelectTrigger>
-                <SelectContent>
-                  {lifestyleOptions.smoking.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.smoking && (
+              {isEditing ? (
+                <Select
+                  value={watchedData.smoking}
+                  onValueChange={(value) => {
+                    setValue('smoking', value);
+                    trigger('smoking');
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Smoking preference" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {lifestyleOptions.smoking.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <p className="text-gray-700 mt-1 p-2 bg-gray-50 rounded-md">
+                  {watchedData.smoking ?
+                    lifestyleOptions.smoking.find(opt => opt.value === watchedData.smoking)?.label || watchedData.smoking
+                    : 'Not specified'
+                  }
+                </p>
+              )}
+              {isEditing && errors.smoking && (
                 <p className="text-sm text-red-600">{errors.smoking.message}</p>
               )}
             </div>
 
             <div className="space-y-2">
               <Label>Drinking *</Label>
-              <Select
-                value={watchedData.drinking}
-                onValueChange={(value) => {
-                  setValue('drinking', value);
-                  trigger('drinking');
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Drinking preference" />
-                </SelectTrigger>
-                <SelectContent>
-                  {lifestyleOptions.drinking.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.drinking && (
+              {isEditing ? (
+                <Select
+                  value={watchedData.drinking}
+                  onValueChange={(value) => {
+                    setValue('drinking', value);
+                    trigger('drinking');
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Drinking preference" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {lifestyleOptions.drinking.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <p className="text-gray-700 mt-1 p-2 bg-gray-50 rounded-md">
+                  {watchedData.drinking ?
+                    lifestyleOptions.drinking.find(opt => opt.value === watchedData.drinking)?.label || watchedData.drinking
+                    : 'Not specified'
+                  }
+                </p>
+              )}
+              {isEditing && errors.drinking && (
                 <p className="text-sm text-red-600">{errors.drinking.message}</p>
               )}
             </div>
 
             <div className="space-y-2">
               <Label>Pets *</Label>
-              <Select
-                value={watchedData.pets}
-                onValueChange={(value) => {
-                  setValue('pets', value);
-                  trigger('pets');
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Pet preference" />
-                </SelectTrigger>
-                <SelectContent>
-                  {lifestyleOptions.pets.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.pets && (
+              {isEditing ? (
+                <Select
+                  value={watchedData.pets}
+                  onValueChange={(value) => {
+                    setValue('pets', value);
+                    trigger('pets');
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Pet preference" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {lifestyleOptions.pets.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <p className="text-gray-700 mt-1 p-2 bg-gray-50 rounded-md">
+                  {watchedData.pets ?
+                    lifestyleOptions.pets.find(opt => opt.value === watchedData.pets)?.label || watchedData.pets
+                    : 'Not specified'
+                  }
+                </p>
+              )}
+              {isEditing && errors.pets && (
                 <p className="text-sm text-red-600">{errors.pets.message}</p>
               )}
             </div>
@@ -432,38 +499,54 @@ export const LifestyleEditor: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Work Schedule *</Label>
-              <Select
-                value={watchedData.workSchedule}
-                onValueChange={(value) => {
-                  setValue('workSchedule', value);
-                  trigger('workSchedule');
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select work schedule" />
-                </SelectTrigger>
-                <SelectContent>
-                  {lifestyleOptions.workSchedule.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.workSchedule && (
+              {isEditing ? (
+                <Select
+                  value={watchedData.workSchedule}
+                  onValueChange={(value) => {
+                    setValue('workSchedule', value);
+                    trigger('workSchedule');
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select work schedule" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {lifestyleOptions.workSchedule.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <p className="text-gray-700 mt-1 p-2 bg-gray-50 rounded-md">
+                  {watchedData.workSchedule ?
+                    lifestyleOptions.workSchedule.find(opt => opt.value === watchedData.workSchedule)?.label || watchedData.workSchedule
+                    : 'Not specified'
+                  }
+                </p>
+              )}
+              {isEditing && errors.workSchedule && (
                 <p className="text-sm text-red-600">{errors.workSchedule.message}</p>
               )}
             </div>
 
             <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="workFromHome"
-                  checked={watchedData.workFromHome}
-                  onCheckedChange={(checked) => setValue('workFromHome', !!checked)}
-                />
-                <Label htmlFor="workFromHome">I work from home</Label>
-              </div>
+              <Label>Work From Home</Label>
+              {isEditing ? (
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="workFromHome"
+                    checked={watchedData.workFromHome}
+                    onCheckedChange={(checked) => setValue('workFromHome', !!checked)}
+                  />
+                  <Label htmlFor="workFromHome">I work from home</Label>
+                </div>
+              ) : (
+                <p className="text-gray-700 mt-1 p-2 bg-gray-50 rounded-md">
+                  {watchedData.workFromHome ? 'Yes, I work from home' : 'No, I work outside home'}
+                </p>
+              )}
             </div>
           </div>
         </CardContent>
@@ -481,46 +564,64 @@ export const LifestyleEditor: React.FC = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-2">
-            {INTERESTS_OPTIONS.map((interest) => (
-              <Button
-                key={interest}
-                type="button"
-                variant={selectedInterests.includes(interest) ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => toggleInterest(interest)}
-                className={selectedInterests.includes(interest) ? 'bg-purple-600' : ''}
-              >
-                {interest}
-              </Button>
-            ))}
-          </div>
-          {errors.interests && (
+          {isEditing ? (
+            <div className="flex flex-wrap gap-2">
+              {INTERESTS_OPTIONS.map((interest) => (
+                <Button
+                  key={interest}
+                  type="button"
+                  variant={selectedInterests.includes(interest) ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => toggleInterest(interest)}
+                  className={selectedInterests.includes(interest) ? 'bg-purple-600' : ''}
+                >
+                  {interest}
+                </Button>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {selectedInterests.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {selectedInterests.map((interest) => (
+                    <Badge key={interest} variant="secondary" className="bg-purple-100 text-purple-800">
+                      {interest}
+                    </Badge>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 italic">No interests selected</p>
+              )}
+            </div>
+          )}
+          {isEditing && errors.interests && (
             <p className="text-sm text-red-600 mt-2">{errors.interests.message}</p>
           )}
         </CardContent>
       </Card>
 
-      {/* Save Button */}
-      <div className="flex justify-end">
-        <Button 
-          type="submit" 
-          disabled={!isDirty || isLoading}
-          className="min-w-[120px]"
-        >
-          {isLoading ? (
-            <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Saving...
-            </>
-          ) : (
-            <>
-              <Save className="w-4 h-4 mr-2" />
-              Save Changes
-            </>
-          )}
-        </Button>
-      </div>
+      {/* Save Button - Only show when editing */}
+      {isEditing && (
+        <div className="flex justify-end">
+          <Button
+            type="submit"
+            disabled={!isDirty || isLoading}
+            className="min-w-[120px]"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4 mr-2" />
+                Save Changes
+              </>
+            )}
+          </Button>
+        </div>
+      )}
     </form>
   );
 };
