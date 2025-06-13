@@ -352,13 +352,17 @@ const Dashboard = () => {
                     Messages
                   </Link>
                 </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <User className="w-4 h-4 mr-2" />
-                  Edit Profile
+                <Button className="w-full justify-start" variant="outline" asChild>
+                  <Link to="/profile?edit=true">
+                    <User className="w-4 h-4 mr-2" />
+                    Edit Profile
+                  </Link>
                 </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <Search className="w-4 h-4 mr-2" />
-                  Update Preferences
+                <Button className="w-full justify-start" variant="outline" asChild>
+                  <Link to="/profile?tab=preferences&edit=true">
+                    <Search className="w-4 h-4 mr-2" />
+                    Update Preferences
+                  </Link>
                 </Button>
               </CardContent>
             </Card>

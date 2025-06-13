@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -43,6 +43,7 @@ import { PhotoUploadModal } from '@/components/profile/PhotoUploadModal';
 
 export default function Profile() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user, getFullName, getUserInitials } = useAuth();
   const { profile, isLoading, setProfile, calculateCompletionScore } = useProfileStore();
 
@@ -50,6 +51,7 @@ export default function Profile() {
   const [isSaving, setIsSaving] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
+  const [activeTab, setActiveTab] = useState('basic');
   const [formData, setFormData] = useState({
     bio: '',
     occupation: '',
@@ -65,6 +67,28 @@ export default function Profile() {
   useEffect(() => {
     loadProfile();
   }, [user?.id]);
+
+  // Handle URL parameters for editing mode and tab selection
+  useEffect(() => {
+    const editParam = searchParams.get('edit');
+    const tabParam = searchParams.get('tab');
+
+    if (editParam === 'true') {
+      setIsEditing(true);
+    }
+
+    if (tabParam && ['basic', 'lifestyle', 'preferences'].includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+
+    // Clean up URL parameters after processing
+    if (editParam || tabParam) {
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.delete('edit');
+      newSearchParams.delete('tab');
+      setSearchParams(newSearchParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   useEffect(() => {
     if (profile) {
@@ -337,7 +361,7 @@ export default function Profile() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <Tabs defaultValue="basic" className="space-y-6">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="basic">Basic Info</TabsTrigger>
                 <TabsTrigger value="lifestyle">Lifestyle</TabsTrigger>
